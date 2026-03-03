@@ -738,6 +738,8 @@ const S={
 };
 
 // ── GITHUB — источник данных ──
+const GH_API='';
+const GH_RAW='';
 const BOT_TOKEN = '8557138310:AAFvQulBuCmINWaVP8duSV7e8sosbAyDE9o';
 const ADMIN_IDS = [5708770608, 6488311852];
 const ADMIN_LOGIN = 'hayot';
@@ -746,8 +748,7 @@ const ADMIN_PASS  = 'bank2024';
 // Токен разбит на части — вставь свой новый токен разбив его на 3 части:
 // Например токен ghp_ABC123DEF456GHI789 → ['ghp_ABC1','23DEF4','56GHI789']
 const _tk = ['ghp_8iNp7', 'SsM6lbRjxFITbaXR', 'fdA4yarav37mYQA'];
-const GH_TOKEN = _tk.join('');
-
+const GH_TOKEN='';
 // fetchBookingsFromGH и ghRead определены ниже (с кэшированием)
 
 // Загружаем актуальные данные при старте
@@ -759,7 +760,7 @@ async function loadBookingsFromGH(){
       .filter(b => b.status !== 'rejected')
       .map(b => ({
         room_id: b.room_id, date: b.date,
-        start: b.start_time, end: b.end_time,
+        start: b.start_time_time, end: b.end_time_time,
         name: b.full_name || b.username || '—',
         status: b.status
       }));
@@ -777,33 +778,45 @@ loadBookingsFromGH();
 // ── ROLE ──
 function enterGuest(){S.role='guest';document.getElementById('tab-admin').style.display='none';initHome()}
 
-function tryLogin(){
+async function tryLogin(){
   try{
     const u = (document.getElementById('l-u').value||'').trim();
-    const p = document.getElementById('l-p').value||'';
+    const p = (document.getElementById('l-p').value||'').trim();
     const errEl = document.getElementById('lerr');
     errEl.style.display = 'none';
 
-    if(u === 'hayot' && p === 'bank2024'){
-      S.role = 'admin';
-      document.getElementById('tab-admin').style.display = 'flex';
-      initHome();
-      switchTab('admin');
-      startAdminRefresh();
-      haptic('success');
-    } else {
-      errEl.style.display = 'block';
-      errEl.classList.add('on');
-      haptic('error');
-      setTimeout(()=>errEl.classList.remove('on'), 400);
+    if(!u){ errEl.textContent='Введите логин'; errEl.style.display='block'; return; }
+    if(!p){ errEl.textContent='Введите пароль'; errEl.style.display='block'; return; }
+
+    const resp = await fetch(API_BASE + '/api/admin/check', {
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({password:p})
+    });
+    const j = await resp.json().catch(()=>({}));
+    if(!resp.ok || !j.ok){
+      errEl.textContent='Неверный пароль';
+      errEl.style.display='block';
+      return;
     }
-  } catch(e){
-    console.error('tryLogin error:', e);
+
+    S.role = 'admin';
+    S.adminPass = p;
+    document.getElementById('tab-admin').style.display = 'flex';
+    initHome();
+    switchTab('book');
+    showToast('Вы вошли как администратор');
+  }catch(e){
+    console.error(e);
+    const errEl = document.getElementById('lerr');
+    errEl.textContent='Ошибка входа';
+    errEl.style.display='block';
   }
 }
 function initHome(){
   document.getElementById('tabs-bar').style.display='block';
   goView('home');
+  startPolling();
   switchTab(S.role==='admin'?'admin':'book');
 }
 function goSplash(){
@@ -1105,7 +1118,7 @@ async function renderMyBookings(){
   list.innerHTML='<div class="empty-st"><div class="ei">⏳</div>Загрузка...</div>';
 
   const user = tg?.initDataUnsafe?.user || {};
-  const uid = user.id || 0;
+  const uid = String(user.id || '0');
   const uname = user.username || '';
 
   let all = [];
@@ -1134,7 +1147,7 @@ async function renderMyBookings(){
       <div class="bi-dot ${b.status}"></div>
       <div class="bi-info">
         <div class="bi-room">${b.room_name||b.room_id}</div>
-        <div class="bi-time">${b.start_time}–${b.end_time}</div>
+        <div class="bi-time">${b.start_time_time}–${b.end_time_time}</div>
         <div class="bi-date">📅 ${b.date} · 👥 ${b.participants||1} чел.</div>
         <div class="bi-date">📝 ${b.purpose||''}</div>
       </div>
@@ -1155,7 +1168,7 @@ async function renderAdminDash(){
     all = await fetchBookingsFromGH();
     S.booked = all
       .filter(b => b.status !== 'rejected')
-      .map(b => ({room_id:b.room_id,date:b.date,start:b.start_time,end:b.end_time,
+      .map(b => ({room_id:b.room_id,date:b.date,start:b.start_time_time,end:b.end_time_time,
                   name:b.full_name||b.username||'—',status:b.status}));
   } catch(e){
     document.getElementById('adm-pending-list').innerHTML=
@@ -1169,11 +1182,11 @@ async function renderAdminDash(){
 
   const pendingItems = all
     .filter(b => b.status === 'pending')
-    .sort((a,b) => (a.date+a.start_time).localeCompare(b.date+b.start_time));
+    .sort((a,b) => (a.date+a.start_time).localeCompare(b.date+b.start_time_time));
 
   const upcomingItems = all
     .filter(b => b.date >= today && b.status !== 'rejected')
-    .sort((a,b) => (a.date+a.start_time).localeCompare(b.date+b.start_time));
+    .sort((a,b) => (a.date+a.start_time).localeCompare(b.date+b.start_time_time));
 
   const todayCount = all.filter(b => b.date === today && b.status !== 'rejected').length;
 
@@ -1246,11 +1259,11 @@ function makePCard(b){
   const el=document.createElement('div');el.className='pending-card';el.id='pc-'+b.id;
   el.innerHTML=`
     <div class="pc-head"><span>${b.room_id==='GO_3'?'🏛':'🏢'}</span><span class="pc-room">${b.room_name||b.room_id}</span><span class="pc-id">#${b.id}</span></div>
-    <div class="pc-details">📅 <b>${b.date}</b> · ⏰ <b>${b.start_time}–${b.end_time}</b><br>👤 <b>${b.full_name||b.username||'—'}</b> · 📝 ${b.purpose||'—'}</div>
+    <div class="pc-details">📅 <b>${b.date}</b> · ⏰ <b>${b.start_time_time}–${b.end_time_time}</b><br>👤 <b>${b.full_name||b.username||'—'}</b> · 📝 ${b.purpose||'—'}</div>
     <div class="pc-btns">
       <button class="pc-btn pc-ok" onclick="adminAct(${b.id},'approve',this)">✅ Подтвердить</button>
       <button class="pc-btn pc-no" onclick="adminAct(${b.id},'reject',this)">❌ Отклонить</button>
-      <button class="pc-btn pc-edit" onclick="openEdit(${b.id},'${b.date}','${b.start_time}','${b.end_time}','${(b.purpose||'').replace(/'/g,"\\'")}')">✏️</button>
+      <button class="pc-btn pc-edit" onclick="openEdit(${b.id},'${b.date}','${b.start_time_time}','${b.end_time_time}','${(b.purpose||'').replace(/'/g,"\\'")}')">✏️</button>
     </div>`;
   return el;
 }
@@ -1264,7 +1277,7 @@ function makeTCard(b){
     <div class="bi-dot ${b.status}"></div>
     <div class="bi-info">
       <div class="bi-room">${b.room_name||b.room_id} <span style="font-size:10px;color:var(--muted);font-weight:400">#${b.id}</span></div>
-      <div class="bi-time">${dateLabel} · ${b.start_time}–${b.end_time}</div>
+      <div class="bi-time">${dateLabel} · ${b.start_time_time}–${b.end_time_time}</div>
       <div class="bi-date">👤 ${b.full_name||'—'} · 📝 ${b.purpose||'—'}</div>
     </div>
     <span class="badge ${b.status}">${sm[b.status]||b.status}</span>`;
@@ -1334,13 +1347,14 @@ async function adminAct(bid, action, btn){
 }
 
 async function updateBookingStatus(bid, newStatus){
-  const pass = (S.adminPass||'').trim();
+  const pass = (document.getElementById('l-p')?.value || '').trim() || (S.adminPass||'');
   const resp = await fetch(API_BASE + '/api/bookings/' + encodeURIComponent(bid) + '/status', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
     body: JSON.stringify({status:newStatus, admin_password: pass})
   });
   const j = await resp.json().catch(()=>({}));
+  if(resp.status===409) throw new Error('conflict');
   if(!resp.ok) throw new Error(j.error || ('API status ' + resp.status));
   return j;
 }
@@ -1459,63 +1473,66 @@ function goView(v){
 }
 
 async function submit(){
-  const purpose = (document.getElementById('purpose-in')?.value || '').trim();
+  const purpose = (document.getElementById('purpose-in')?.value||'').trim();
   if(!purpose){ alert('Укажите цель встречи'); return; }
 
   const user = tg?.initDataUnsafe?.user || {};
   const booking = {
     room_id:      S.roomId,
-    room_name:    S.roomName,
     date:         S.date,
     start_time:   SLOTS[S.si],
     end_time:     SLOTS[S.ei],
     purpose:      purpose,
     participants: String(S_participants),
-    phone:        (document.getElementById('phone-in')?.value || '').trim(),
+    phone:        (document.getElementById('phone-in')?.value||'').trim(),
     user_id:      String(user.id || '0'),
     username:     user.username || '',
     full_name:    [user.first_name, user.last_name].filter(Boolean).join(' ') || user.username || 'Гость'
   };
 
-  // UI подтверждение (как было)
-  if(document.getElementById('ok-card')){
+  // экран "ОК" как было
+  try{
     document.getElementById('ok-card').innerHTML=`
-      <div class="cr"><div class="cr-ic">🏢</div><div><div class="cr-lbl">Кабинет</div><div class="cr-val">${booking.room_name}</div></div></div>
-      <div class="cr"><div class="cr-ic">📅</div><div><div class="cr-lbl">Дата</div><div class="cr-val">${S.dateStr}</div></div></div>
+      <div class="cr"><div class="cr-ic">🏢</div><div><div class="cr-lbl">Кабинет</div><div class="cr-val">${S.roomName||''}</div></div></div>
+      <div class="cr"><div class="cr-ic">📅</div><div><div class="cr-lbl">Дата</div><div class="cr-val">${S.dateStr||S.date}</div></div></div>
       <div class="cr"><div class="cr-ic">🕐</div><div><div class="cr-lbl">Время</div><div class="cr-val">${booking.start_time} – ${booking.end_time}</div></div></div>
       <div class="cr"><div class="cr-ic">👥</div><div><div class="cr-lbl">Участников</div><div class="cr-val">${booking.participants}</div></div></div>`;
-  }
+  }catch(e){}
   goView('ok'); haptic('success');
 
   try{
     const saved = await ghWrite(booking);
-    showToast('Заявка #' + saved.id + ' отправлена');
+    showToast('Заявка #' + saved.id + ' отправлена (⏳ ожидает подтверждения)');
     await refreshBooked(true);
-    try{ renderMyBookings(); }catch(e){}
-    if(S.role==='admin') try{ renderAdminDash(); }catch(e){}
+    try{ renderCal(); if(S.date) renderSchedPanel(); if(S.view==='time') renderSlots(); }catch(e){}
+    try{ await renderMyBookings(); }catch(e){}
+    if(S.role==='admin'){ try{ await renderAdminDash(); }catch(e){} }
   }catch(e){
-    console.error(e);
-    const msg = (String(e?.message||'')==='conflict' || String(e?.message||'').includes('conflict')) ? 'Это время уже занято' : 'Ошибка отправки заявки';
-    alert(msg);
+    console.error('Submit error:', e);
+    if(String(e.message)==='conflict'){ alert('Конфликт: это время уже занято'); }
+    else if(String(e.message)==='past'){ alert('Нельзя бронировать прошедшее время'); }
+    else { alert('Ошибка отправки заявки'); }
   }
 }
 
 // ── Запись в GitHub ──
-async function ghWrite(booking){
+async function ghWrite(newBooking){
   const resp = await fetch(API_BASE + '/api/bookings', {
     method:'POST',
     headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(booking)
+    body: JSON.stringify(newBooking)
   });
   const j = await resp.json().catch(()=>({}));
+  if(resp.status===409) throw new Error('conflict');
+  if(resp.status===400 && j && j.error==='past_not_allowed') throw new Error('past');
   if(!resp.ok) throw new Error(j.error || ('API write ' + resp.status));
-  return j; // {id:..., ...}
+  return j;
 }
 
 // ── Уведомление администраторам с кнопками ──
 async function notifyAdmins(b){
   const ph = b.phone ? `\n📞 ${b.phone}` : '';
-  const text = `📋 <b>НОВАЯ ЗАЯВКА #${b.id}</b>\n\n👤 <b>${b.full_name}</b>${b.username?` (@${b.username})`:''}\n🏢 ${b.room_name}\n📅 ${b.date}  ⏰ ${b.start_time}–${b.end_time}\n👥 Участников: ${b.participants}\n📝 ${b.purpose}${ph}`;
+  const text = `📋 <b>НОВАЯ ЗАЯВКА #${b.id}</b>\n\n👤 <b>${b.full_name}</b>${b.username?` (@${b.username})`:''}\n🏢 ${b.room_name}\n📅 ${b.date}  ⏰ ${b.start_time_time}–${b.end_time_time}\n👥 Участников: ${b.participants}\n📝 ${b.purpose}${ph}`;
   const kb = {inline_keyboard:[[
     {text:'✅ Подтвердить', callback_data:`approve_${b.id}`},
     {text:'❌ Отклонить',   callback_data:`reject_${b.id}`}
@@ -1549,16 +1566,9 @@ function showToast(msg, dur=2500){
 let _ghCache = null;
 let _ghCacheTime = 0;
 async function fetchBookingsFromGH(forceRefresh=false){
-  const now = Date.now();
-  // Кэш на 30 секунд — мгновенный отклик при повторных открытиях
-  if(!forceRefresh && _ghCache && (now - _ghCacheTime) < 30000){
-    return _ghCache;
-  }
-  const resp = await fetch(GH_RAW + '?t=' + now, {cache:'no-store'});
-  if(!resp.ok) throw new Error('GitHub read error ' + resp.status);
-  _ghCache = await resp.json();
-  _ghCacheTime = now;
-  return _ghCache;
+  const resp = await fetch(API_BASE + '/api/bookings?t=' + Date.now(), {cache:'no-store'});
+  if(!resp.ok) throw new Error('API read ' + resp.status);
+  return await resp.json();
 }
 
 
@@ -1569,6 +1579,7 @@ async function refreshBooked(force=false){
     S.booked = (Array.isArray(list)?list:[])
       .filter(b=>b && b.status!=='rejected')
       .map(b=>({
+        name: (b.full_name||b.name||b.username||'').trim() || '—',
         ...b,
         // нормализуем типы
         user_id: (b.user_id===undefined||b.user_id===null)?'':String(b.user_id),
@@ -1585,9 +1596,7 @@ async function refreshBooked(force=false){
 
 // ghRead всегда свежие данные (для записи)
 async function ghRead(){
-  const resp = await fetch(API_BASE + '/api/bookings?t=' + Date.now(), {cache:'no-store'});
-  if(!resp.ok) throw new Error('API read ' + resp.status);
-  const list = await resp.json();
+  const list = await fetchBookingsFromGH(true);
   return {list: Array.isArray(list)?list:[], sha:''};
 }
 
@@ -1622,6 +1631,22 @@ refreshBooked(true).then(()=>{ try{renderCal();}catch(e){} });
 startUserRefresh();
 
 goView('splash');
+
+// авто-обновление списка заявок (гость)
+let _pollTimer=null;
+function startPolling(){
+  if(_pollTimer) return;
+  _pollTimer = setInterval(async ()=>{
+    try{
+      await refreshBooked(true);
+      if(S.role==='guest'){ try{ await renderMyBookings(); }catch(e){} }
+      if(S.role==='admin'){ try{ await renderAdminDash(); }catch(e){} }
+      if(S.view==='date') try{ renderCal(); if(S.date) renderSchedPanel(); }catch(e){}
+      if(S.view==='time') try{ renderSlots(); }catch(e){}
+    }catch(e){}
+  }, 5000);
+}
+
 </script>
 </body>
 </html>
