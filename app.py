@@ -1,7 +1,7 @@
 import os, sqlite3, json, hmac, hashlib, threading, requests
 from datetime import datetime
 from typing import Any, Dict, List, Optional
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, render_template
 from flask_cors import CORS
 from openpyxl import Workbook
 
@@ -192,6 +192,10 @@ def set_status(bid: int, status: str) -> Optional[dict]:
 # ─────────────────────────────────────────────
 # TELEGRAM WEBHOOK (обработка callback кнопок)
 # ─────────────────────────────────────────────
+@app.get("/")
+def page():
+    return render_template("index.html")
+
 @app.post("/tg/webhook")
 def tg_webhook():
     data = request.get_json(silent=True) or {}
