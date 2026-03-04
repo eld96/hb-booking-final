@@ -22,7 +22,11 @@
   --border: rgba(255,255,255,.12);
   --card:   rgba(0,0,0,.18);
   --r:13px;
+  --ic-tab:22px;
+  --ic-room:30px;
+  --ic-role:40px;
 }
+
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden}
 body{
@@ -50,7 +54,7 @@ body{
 .tb-back.on{visibility:visible}
 .tb-back:active{background:var(--coral);color:#fff}
 .tb-logo{flex:1;display:flex;align-items:center}
-.tb-logo img{height:22px;object-fit:contain}
+.tb-logo #tb-img{height:36px;width:auto;object-fit:contain}
 .tb-right{text-align:right;flex-shrink:0}
 .tb-title{font-size:13px;font-weight:700}
 .tb-sub{font-size:10px;color:var(--muted)}
@@ -68,7 +72,7 @@ body{
   border-bottom:2px solid transparent;
 }
 .tab.on{color:var(--coral);border-bottom-color:var(--coral)}
-.tab-ic{font-size:18px;margin-bottom:2px}
+.tab-ic{font-size:var(--ic-tab);margin-bottom:2px}
 
 /* ── SCREENS ── */
 .screen{display:none;min-height:100%}
@@ -82,7 +86,7 @@ body{
   padding:40px 24px;min-height:100vh;
   background:linear-gradient(160deg,var(--teal5),var(--teal4),var(--teal));
 }
-.sp-logo img{height:38px;margin-bottom:12px}
+.sp-logo img{height:58px;margin-bottom:14px}
 .sp-tagline{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:6px}
 .sp-head{font-size:22px;font-weight:800;text-align:center;margin-bottom:6px}
 .sp-desc{font-size:12px;color:var(--muted);text-align:center;margin-bottom:32px}
@@ -94,7 +98,7 @@ body{
 }
 .role-card:active{transform:scale(.96)}
 .role-card:hover,.role-card:active{border-color:var(--coral);background:rgba(232,89,58,.12)}
-.rc-icon{font-size:34px;margin-bottom:8px}
+.rc-icon{font-size:var(--ic-role);margin-bottom:8px}
 .rc-name{font-size:14px;font-weight:700;margin-bottom:3px}
 .rc-desc{font-size:10px;color:var(--muted)}
 
@@ -124,7 +128,7 @@ body{
 @keyframes shake{0%,100%{transform:none}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
 
 /* ── SLABEL ── */
-.slabel{font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
+.slabel{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);margin:14px 0 8px}
 
 /* ── ROOM CARDS ── */
 .room-card{
@@ -135,10 +139,10 @@ body{
 .room-card:active{transform:scale(.98)}
 .room-card.on{border-color:var(--coral);background:rgba(232,89,58,.1)}
 .rm-ic{
-  width:48px;height:48px;border-radius:11px;
+  width:54px;height:54px;border-radius:11px;
   background:rgba(0,0,0,.2);
   display:flex;align-items:center;justify-content:center;
-  font-size:26px;flex-shrink:0;transition:.2s;
+  font-size:var(--ic-room);flex-shrink:0;transition:.2s;
 }
 .room-card.on .rm-ic{background:rgba(232,89,58,.2)}
 .rm-info{flex:1}
@@ -363,10 +367,10 @@ textarea::placeholder{color:var(--muted)}
 .bi-dot.pending{background:var(--gold)}
 .bi-dot.rejected{background:var(--red)}
 .bi-info{flex:1}
-.bi-room{font-size:12px;font-weight:700;margin-bottom:2px}
-.bi-time{font-size:11px;color:var(--coral)}
-.bi-date{font-size:10px;color:var(--muted);margin-top:1px}
-.badge{display:inline-block;padding:4px 8px;border-radius:6px;font-size:9px;font-weight:700;white-space:nowrap}
+.bi-room{font-size:16px;font-weight:800;margin-bottom:5px}
+.bi-time{font-size:14px;color:var(--coral);font-weight:600}
+.bi-date{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.7}
+.badge{display:inline-block;padding:6px 12px;border-radius:8px;font-size:12px;font-weight:700;white-space:nowrap}
 .badge.approved{background:rgba(46,204,113,.12);color:var(--green)}
 .badge.pending{background:rgba(243,156,18,.12);color:var(--gold)}
 .badge.rejected{background:rgba(231,76,60,.1);color:#f1948a}
@@ -377,8 +381,8 @@ textarea::placeholder{color:var(--muted)}
   background:rgba(0,0,0,.2);border:1px solid var(--border);
   border-radius:var(--r);padding:14px 8px;text-align:center;
 }
-.stat-num{font-size:28px;font-weight:900;color:var(--coral)}
-.stat-lbl{font-size:9px;color:var(--muted);margin-top:2px}
+.stat-num{font-size:34px;font-weight:900;color:var(--coral)}
+.stat-lbl{font-size:12px;color:var(--muted);margin-top:4px}
 /* ── DASHBOARD ── */
 .dash-section{
   background:rgba(0,0,0,.2);border:1px solid var(--border);
@@ -397,12 +401,12 @@ textarea::placeholder{color:var(--muted)}
   border-radius:var(--r);padding:14px;margin-bottom:10px;animation:fadeUp .2s;
 }
 .pc-head{display:flex;align-items:center;gap:8px;margin-bottom:8px}
-.pc-room{font-weight:700;font-size:13px}
+.pc-room{font-weight:800;font-size:16px}
 .pc-id{font-size:10px;color:var(--muted);margin-left:auto}
-.pc-details{font-size:11px;color:var(--muted);margin-bottom:10px;line-height:1.7}
+.pc-details{font-size:14px;color:var(--muted);margin-bottom:12px;line-height:1.9}
 .pc-details b{color:var(--text)}
 .pc-btns{display:flex;gap:6px}
-.pc-btn{flex:1;padding:9px;border-radius:9px;border:none;font-size:12px;font-weight:700;cursor:pointer;transition:.2s}
+.pc-btn{flex:1;padding:12px;border-radius:10px;border:none;font-size:13px;font-weight:700;cursor:pointer;transition:.2s}
 .pc-btn:active{transform:scale(.97)}
 .pc-ok{background:rgba(46,204,113,.12);color:var(--green);border:1px solid rgba(46,204,113,.25)}
 .pc-no{background:rgba(231,76,60,.1);color:#f1948a;border:1px solid rgba(231,76,60,.2)}
@@ -450,7 +454,7 @@ textarea::placeholder{color:var(--muted)}
   position:fixed;bottom:0;left:0;right:0;padding:8px 14px 16px;
   background:linear-gradient(to top,var(--teal5) 65%,transparent);z-index:10;
 }
-.btn{width:100%;padding:15px;border-radius:12px;border:none;font-size:15px;font-weight:700;cursor:pointer;transition:.2s;display:block}
+.btn{width:100%;padding:15px;border-radius:12px;border:none;font-size:14px;font-weight:700;cursor:pointer;transition:.2s;display:block}
 .btn:active{transform:scale(.97)}
 .btn-p{
   background:linear-gradient(135deg,var(--coral),var(--coral2));
@@ -462,13 +466,34 @@ textarea::placeholder{color:var(--muted)}
 .empty-st{text-align:center;padding:28px 16px;color:var(--muted)}
 .empty-st .ei{font-size:32px;margin-bottom:8px}
 
-/* ── UI tweaks (harmonize) ── */
-.tab-ic{font-size:18px}
-.tab-tx{font-size:11px}
-.pc-btn{font-size:12px;padding:10px 10px}
-.pc-btn span, .pc-btn i{font-size:14px}
-.rm-ic{font-size:22px}
-
+/* ── SELECT DARK THEME ── */
+select{background:var(--teal4)!important;color:var(--text)!important;border-radius:9px;-webkit-appearance:none}
+select option{background:var(--teal4)!important;color:var(--text)!important}
+.ibox select{padding:12px 14px;font-size:14px;width:100%;border:none;outline:none;font-family:inherit;cursor:pointer}
+/* ── BITEM FLEX ── */
+.bitem{flex-direction:column!important;align-items:stretch!important;gap:0!important;padding:14px 14px 12px!important}
+.bitem-row{display:flex;align-items:flex-start;gap:12px}
+.bi-dot{width:12px;height:12px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.bi-dot.approved{background:#2ecc71}.bi-dot.pending{background:#f39c12}.bi-dot.rejected{background:#e74c3c}
+.badge.approved{background:rgba(46,204,113,.15);color:#2ecc71}
+.badge.pending{background:rgba(243,156,18,.15);color:#f39c12}
+.badge.rejected{background:rgba(231,76,60,.13);color:#f1948a}
+/* ── CANCEL BUTTON ── */
+.cancel-btn{width:100%;margin-top:10px;padding:12px;border-radius:10px;
+  border:1.5px solid rgba(231,76,60,.4);background:rgba(231,76,60,.08);
+  color:#f1948a;font-size:13px;font-weight:700;cursor:pointer;
+  transition:.15s;display:block;text-align:center}
+.cancel-btn:active{transform:scale(.97)}
+/* ── REJECT TEXTAREA ── */
+.reason-box{width:100%;background:rgba(0,0,0,.25);border:1.5px solid var(--border);
+  border-radius:9px;padding:11px 13px;color:var(--text);font-size:14px;
+  outline:none;resize:none;font-family:inherit;min-height:80px;transition:.2s;display:block}
+.reason-box:focus{border-color:var(--coral)}
+/* ── MISC ── */
+.bi-dept{font-size:12px;color:var(--muted);margin-top:3px}
+.pc-del{background:rgba(231,76,60,.08)!important;color:#f1948a!important;border-color:rgba(231,76,60,.25)!important;flex:none!important;padding:12px 13px!important}
+.dash-bar-fill.yellow{background:#f1c40f}
+.reject-reason{font-size:12px;color:#f1948a;margin-top:4px;background:rgba(231,76,60,.07);border-radius:6px;padding:5px 8px;display:block}
 </style>
 </head>
 <body>
@@ -554,6 +579,7 @@ textarea::placeholder{color:var(--muted)}
       </div>
     </div>
     <div id="pane-my" class="pad" style="display:none">
+      <div id="my-dash"></div>
       <div id="my-list"><div class="empty-st"><div class="ei">📭</div>Нет бронирований</div></div>
     </div>
     <div id="pane-admin" class="pad" style="display:none">
@@ -652,15 +678,23 @@ textarea::placeholder{color:var(--muted)}
       <div class="slabel">Цель встречи</div>
       <div class="ibox"><textarea id="purpose-in" placeholder="Укажите тему или цель встречи..." oninput="chkPurpose()"></textarea></div>
 
-      <div class="slabel" style="margin-top:16px">Количество участников</div>
-      <div class="participants-row">
-        <button class="part-btn on" data-val="1" onclick="setPart(this)">1</button>
-        <button class="part-btn" data-val="2" onclick="setPart(this)">2</button>
-        <button class="part-btn" data-val="3" onclick="setPart(this)">3</button>
-        <button class="part-btn" data-val="4" onclick="setPart(this)">4</button>
-        <button class="part-btn" data-val="5" onclick="setPart(this)">5</button>
-        <button class="part-btn" data-val="6+" onclick="setPart(this)">6+</button>
-      </div>
+      <div class="slabel" style="margin-top:16px">Подразделение</div>
+      <div class="ibox"><select id="dept-in">
+        <option value="">— выберите —</option>
+        <option>Кредитный департамент</option>
+        <option>Риск-менеджмент</option>
+        <option>Казначейство</option>
+        <option>ИТ-департамент</option>
+        <option>Операционный департамент</option>
+        <option>Юридический отдел</option>
+        <option>Бухгалтерия / Финансы</option>
+        <option>Розничный бизнес</option>
+        <option>Корпоративный бизнес</option>
+        <option>HR / Персонал</option>
+        <option>Служба безопасности</option>
+        <option>Руководство / Правление</option>
+        <option>Прочее</option>
+      </select></div>
 
       <div class="slabel" style="margin-top:16px">Телефон <span style="font-weight:400;color:var(--muted);text-transform:none;letter-spacing:0;font-size:9px">— необязательно</span></div>
       <div class="ibox"><input type="tel" id="phone-in" placeholder="+998 XX XXX XX XX" style="background:transparent;border:none;width:100%;padding:12px;color:var(--text);font-size:14px;outline:none;font-family:inherit"></div>
@@ -703,346 +737,360 @@ textarea::placeholder{color:var(--muted)}
       <div class="mfield"><label>Конец</label><select id="edit-end"></select></div>
     </div>
     <div class="mfield"><label>Цель встречи</label><input type="text" id="edit-purpose"></div>
-    <button class="btn btn-p" onclick="saveEdit()">💾 Сохранить</button>
+    <div class="mfield" id="reason-wrap" style="display:none"><label>Причина отмены</label>
+      <textarea class="reason-box" id="edit-reason" placeholder="Укажите причину..."></textarea></div>
+    <div style="display:flex;gap:8px;margin-top:4px">
+      <button class="btn btn-p" onclick="saveEdit()" style="flex:3">💾 Сохранить</button>
+      <button class="btn" onclick="confirmDelete()" style="flex:0 0 48px;background:rgba(231,76,60,.1);color:#f1948a;border:1px solid rgba(231,76,60,.25);font-size:17px">🗑</button>
+    </div>
+  </div>
+</div>
+
+<!-- REJECT MODAL -->
+<div class="modal-overlay" id="reject-modal" onclick="if(event.target===this)closeRejectModal()">
+  <div class="modal-box">
+    <button class="mclose" onclick="closeRejectModal()">✕</button>
+    <div class="modal-title">❌ Отклонить / Отменить заявку</div>
+    <input type="hidden" id="rej-bid">
+    <div class="mfield">
+      <label>Причина <span style="font-weight:400;font-size:10px;color:var(--muted);text-transform:none;letter-spacing:0">— необязательно</span></label>
+      <textarea class="reason-box" id="rej-reason" placeholder="Например: нет свободного времени, выберите другую дату..."></textarea>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px">
+      <button class="btn" onclick="closeRejectModal()" style="flex:1;background:rgba(0,0,0,.2);color:var(--muted);border:1px solid var(--border)">Назад</button>
+      <button class="btn btn-p" onclick="doReject()" style="flex:2">❌ Подтвердить отмену</button>
+    </div>
   </div>
 </div>
 
 <script>
-const tg=window.Telegram?.WebApp;
-const API_BASE = '';
+'use strict';
+const tg = window.Telegram?.WebApp;
+if (tg) { tg.expand(); try { tg.setHeaderColor('#0e3a4a'); } catch(e){} }
 
-if(tg){tg.expand();try{tg.setHeaderColor('#0e3a4a')}catch(e){}}
+/* ═══════════════════════════════════════════════════
+   CONFIG
+═══════════════════════════════════════════════════ */
+const API        = 'https://hb-booking-final.onrender.com';
+const ADMIN_LOGIN = 'hayot';
+const ADMIN_PASS  = 'bank2024';
 
-// ── TIME SLOTS: 09:00 to 18:00 in 30-min steps ──
-// IMPORTANT: SLOTS[i] = start of slot i, booking from SLOTS[si] to SLOTS[ei]
-// si = start index, ei = end index (ei > si, end time = SLOTS[ei])
-const SLOTS=[];
-for(let h=9;h<=18;h++){
-  SLOTS.push(p2(h)+':00');
-  if(h<18) SLOTS.push(p2(h)+':30');
-}
-// SLOTS = [09:00,09:30,10:00,...,17:30,18:00]  length = 19
-
-function p2(n){return String(n).padStart(2,'0')}
-
-// fill edit modal selects
-const es=document.getElementById('edit-start'),ee=document.getElementById('edit-end');
-SLOTS.forEach(s=>{
-  es.innerHTML+=`<option value="${s}">${s}</option>`;
-  ee.innerHTML+=`<option value="${s}">${s}</option>`;
-});
-
-const MONTHS=['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
-const MONTHS_S=['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
-
-const S={
-  view:'splash',tab:'book',role:'guest',
-  roomId:null,roomName:null,
-  date:null,dateStr:null,
-  calY:new Date().getFullYear(),calM:new Date().getMonth(),
-  si:null,    // start slot index → start time = SLOTS[si]
-  ei:null,    // end slot index   → end time   = SLOTS[ei]   (ei > si)
-  selEnd:false,
-  booked:[],myBookings:[],
-  adminData:{pending:0,today:0,total:0,pendingItems:[],todayItems:[]},
+/* ═══════════════════════════════════════════════════
+   STATE
+═══════════════════════════════════════════════════ */
+const S = {
+  view:'splash', tab:'book', role:'guest',
+  roomId:null, roomName:null,
+  date:null, dateStr:null,
+  calY:new Date().getFullYear(), calM:new Date().getMonth(),
+  si:null, ei:null, selEnd:false,
+  booked:[],
 };
 
-// ── GITHUB — источник данных ──
-// fetchBookingsFromGH и ghRead определены ниже (с кэшированием)
+const SLOTS = [];
+for (let h = 9; h <= 18; h++) { SLOTS.push(p2(h)+':00'); if (h < 18) SLOTS.push(p2(h)+':30'); }
+function p2(n) { return String(n).padStart(2,'0'); }
 
-// Загружаем актуальные данные при старте
-async function loadBookingsFromGH(){
-  try {
-    const all = await fetchBookingsFromGH();
-    // Для календаря (занятые слоты)
-    S.booked = all
-      .filter(b => b.status !== 'rejected')
-      .map(b => ({
-        room_id: b.room_id, date: b.date,
-        start: b.start_time, end: b.end_time,
-        name: b.full_name || b.username || '—',
-        status: b.status
-      }));
-    // Мои заявки
-    const myId = String(tg?.initDataUnsafe?.user?.id || '');
-    if(myId){
-      S.myBookings = all
-        .filter(b => String(b.user_id) === myId)
-        .map(b=>({...b, room_name: b.room_name||b.room_id}));
+const MONTHS   = ['Январь','Февраль','Март','Апрель','Май','Июнь','Июль','Август','Сентябрь','Октябрь','Ноябрь','Декабрь'];
+const MONTHS_S = ['янв','фев','мар','апр','май','июн','июл','авг','сен','окт','ноя','дек'];
+
+/* Populate edit-modal time selects once */
+(function(){
+  const es = document.getElementById('edit-start');
+  const ee = document.getElementById('edit-end');
+  SLOTS.forEach(s => {
+    es.innerHTML += `<option value="${s}">${s}</option>`;
+    ee.innerHTML += `<option value="${s}">${s}</option>`;
+  });
+})();
+
+/* ═══════════════════════════════════════════════════
+   USER IDENTITY
+   - In Telegram: uses real Telegram user ID
+   - In browser: generates stable UUID stored in localStorage
+═══════════════════════════════════════════════════ */
+function getUser() {
+  const u = tg?.initDataUnsafe?.user || {};
+  let uid = u.id ? String(u.id) : '';
+  if (!uid) {
+    uid = localStorage.getItem('hb_uid') || '';
+    if (!uid) {
+      uid = 'web_' + Date.now().toString(36) + Math.random().toString(36).slice(2,8);
+      localStorage.setItem('hb_uid', uid);
     }
-  } catch(e){ console.log('GH load error', e); }
+  }
+  return {
+    user_id:   uid,
+    username:  u.username  || '',
+    full_name: [u.first_name, u.last_name].filter(Boolean).join(' ') || u.username || 'Сотрудник',
+    chat_id:   u.id ? String(u.id) : '',
+    phone:     localStorage.getItem('hb_phone') || '',
+  };
 }
-loadBookingsFromGH();
 
-// ── ROLE ──
-function enterGuest(){S.role='guest';document.getElementById('tab-admin').style.display='none';initHome()}
+/* ═══════════════════════════════════════════════════
+   API LAYER — handles Render sleep (cold start)
+═══════════════════════════════════════════════════ */
+let _ready = false;
+fetch(API + '/health', { signal: AbortSignal.timeout(25000) })
+  .then(() => { _ready = true; })
+  .catch(() => {});
 
-function tryLogin(){
-  try{
-    const u = (document.getElementById('l-u').value||'').trim();
-    const p = document.getElementById('l-p').value||'';
-    const errEl = document.getElementById('lerr');
-    errEl.style.display = 'none';
-
-    if(u === 'hayot' && p === 'bank2024'){
-      S.role = 'admin';
-      document.getElementById('tab-admin').style.display = 'flex';
-      initHome();
-      switchTab('admin');
-      startAdminRefresh();
-      haptic('success');
-    } else {
-      errEl.style.display = 'block';
-      errEl.classList.add('on');
-      haptic('error');
-      setTimeout(()=>errEl.classList.remove('on'), 400);
-    }
-  } catch(e){
-    console.error('tryLogin error:', e);
+async function api(path, opts = {}, ms = 15000) {
+  const ctrl = new AbortController();
+  const tmr  = setTimeout(() => ctrl.abort(), _ready ? ms : 25000);
+  try {
+    const r = await fetch(API + path, {
+      headers: { 'Content-Type': 'application/json' },
+      signal: ctrl.signal, ...opts,
+    });
+    clearTimeout(tmr);
+    _ready = true;
+    if (!r.ok) { const e = await r.json().catch(() => ({ error:'server_error' })); throw e; }
+    return r.json();
+  } catch(e) {
+    clearTimeout(tmr);
+    if (e.name === 'AbortError') throw { error: 'timeout' };
+    throw e;
   }
 }
-function initHome(){
-  document.getElementById('tabs-bar').style.display='block';
-  goView('home');
-  switchTab(S.role==='admin'?'admin':'book');
+
+function EM(e) {
+  const M = {
+    timeout:            '⏱ Сервер просыпается — повторите через 15 сек',
+    conflict:           '🚫 Время уже занято',
+    bad_password:       '🔒 Неверный пароль',
+    not_found:          '❌ Заявка не найдена',
+    forbidden:          '🔒 Нет доступа к этой заявке',
+    bad_status:         '⚠️ Нельзя выполнить действие для этого статуса',
+    server_error:       '⚠️ Ошибка сервера',
+    invalid_time_range: '⚠️ Неверное время',
+  };
+  return M[e?.error] || ('⚠️ ' + (e?.error || 'Повторите попытку'));
 }
-function goSplash(){
-  S.roomId=null;S.roomName=null;S.date=null;S.dateStr=null;
-  S.si=null;S.ei=null;S.selEnd=false;
-  document.querySelectorAll('.rm-chk').forEach(e=>e.textContent='');
-  document.querySelectorAll('.room-card').forEach(e=>e.classList.remove('on'));
-  document.getElementById('tabs-bar').style.display='none';
-  // Сброс полей формы
-  try{document.getElementById('purpose-in').value='';}catch(e){}
-  try{document.getElementById('phone-in').value='';}catch(e){}
-  try{
-    document.querySelectorAll('.part-btn').forEach(b=>b.classList.remove('on'));
-    document.querySelector('.part-btn[data-val="1"]').classList.add('on');
-    S_participants=1;
-  }catch(e){}
+
+/* ═══════════════════════════════════════════════════
+   DATA
+═══════════════════════════════════════════════════ */
+async function loadBooked() {
+  try {
+    const all = await api('/api/bookings');
+    S.booked = all
+      .filter(b => b.status !== 'rejected')
+      .map(b => ({ ...b, room_id: String(b.room_id||''), start_time: b.start_time||'', end_time: b.end_time||'' }));
+  } catch(e) {}
+}
+
+/* ═══════════════════════════════════════════════════
+   AUTH
+═══════════════════════════════════════════════════ */
+function enterGuest() {
+  S.role = 'guest';
+  document.getElementById('tab-admin').style.display = 'none';
+  initHome();
+}
+
+function tryLogin() {
+  const u   = (document.getElementById('l-u').value||'').trim();
+  const p   = document.getElementById('l-p').value||'';
+  const err = document.getElementById('lerr');
+  if (u === ADMIN_LOGIN && p === ADMIN_PASS) {
+    S.role = 'admin';
+    document.getElementById('tab-admin').style.display = 'flex';
+    initHome(); switchTab('admin'); startAdminRefresh(); haptic('success');
+  } else {
+    err.style.display = 'block'; err.classList.add('on'); haptic('error');
+    setTimeout(() => err.classList.remove('on'), 400);
+  }
+}
+
+function initHome() {
+  document.getElementById('tabs-bar').style.display = 'block';
+  goView('home');
+  switchTab(S.role === 'admin' ? 'admin' : 'book');
+}
+
+function goSplash() {
+  Object.assign(S, { roomId:null, roomName:null, date:null, dateStr:null, si:null, ei:null, selEnd:false });
+  document.querySelectorAll('.rm-chk').forEach(e => e.textContent = '');
+  document.querySelectorAll('.room-card').forEach(e => e.classList.remove('on'));
+  document.getElementById('tabs-bar').style.display = 'none';
+  ['purpose-in','phone-in'].forEach(id => { try { document.getElementById(id).value=''; } catch(e){} });
+  try { document.getElementById('dept-in').value = ''; } catch(e) {}
   goView('splash');
 }
 
-// ── TABS ──
-function switchTab(t){
-  S.tab=t;
-  ['book','my','admin'].forEach(id=>{
+/* ═══════════════════════════════════════════════════
+   TABS
+═══════════════════════════════════════════════════ */
+function switchTab(t) {
+  S.tab = t;
+  ['book','my','admin'].forEach(id => {
     document.getElementById('tab-'+id)?.classList.remove('on');
-    document.getElementById('pane-'+id).style.display='none';
+    document.getElementById('pane-'+id).style.display = 'none';
   });
   document.getElementById('tab-'+t).classList.add('on');
-  document.getElementById('pane-'+t).style.display='block';
-  if(t==='book'){document.getElementById('botbar').style.display='block';btnOk(!!S.roomId);document.getElementById('btn-main').textContent='Выбрать дату →'}
-  else document.getElementById('botbar').style.display='none';
-  if(t==='my') renderMyBookings();
-  if(t==='admin') renderAdminDash();
+  document.getElementById('pane-'+t).style.display = 'block';
+  const bb = document.getElementById('botbar');
+  if (t === 'book') { bb.style.display='block'; btnOk(!!S.roomId); }
+  else bb.style.display = 'none';
+  if (t === 'my')    renderMyBookings();
+  if (t === 'admin') renderAdminDash();
 }
 
-// ── ROOM ──
-function pickRoom(id,name){
-  S.roomId=id;S.roomName=name;
-  document.querySelectorAll('.room-card').forEach(c=>c.classList.remove('on'));
-  document.getElementById('ck-GO_3').textContent='';
-  document.getElementById('ck-MINOR').textContent='';
+/* ═══════════════════════════════════════════════════
+   ROOM SELECTION
+═══════════════════════════════════════════════════ */
+function pickRoom(id, name) {
+  S.roomId = id; S.roomName = name;
+  document.querySelectorAll('.room-card').forEach(c => c.classList.remove('on'));
+  ['GO_3','MINOR'].forEach(r => document.getElementById('ck-'+r).textContent = '');
   document.getElementById('rc-'+id).classList.add('on');
-  document.getElementById('ck-'+id).textContent='✅';
-  btnOk(true);haptic('light');
+  document.getElementById('ck-'+id).textContent = '✅';
+  btnOk(true); haptic('light');
 }
 
-// ── CALENDAR ──
-function renderCal(){
-  const y=S.calY,m=S.calM;
-  document.getElementById('cal-title').textContent=MONTHS[m]+' '+y;
-  const today=new Date();today.setHours(0,0,0,0);
-  const fdow=(new Date(y,m,1).getDay()+6)%7;
-  const dim=new Date(y,m+1,0).getDate();
-  const g=document.getElementById('cal-grid');g.innerHTML='';
-  for(let i=0;i<fdow;i++){const e=document.createElement('div');e.className='cd empty';g.appendChild(e)}
-  for(let d=1;d<=dim;d++){
-    const dt=new Date(y,m,d);
-    const el=document.createElement('div');el.className='cd';el.textContent=d;
+/* ═══════════════════════════════════════════════════
+   CALENDAR
+═══════════════════════════════════════════════════ */
+function renderCal() {
+  const y = S.calY, m = S.calM;
+  document.getElementById('cal-title').textContent = MONTHS[m]+' '+y;
+  const today = new Date(); today.setHours(0,0,0,0);
+  const fdow  = (new Date(y,m,1).getDay()+6)%7;
+  const dim   = new Date(y,m+1,0).getDate();
+  const g = document.getElementById('cal-grid'); g.innerHTML = '';
+  for (let i=0;i<fdow;i++) { const e=document.createElement('div'); e.className='cd empty'; g.appendChild(e); }
+  for (let d=1;d<=dim;d++) {
+    const dt=new Date(y,m,d), ds=y+'-'+p2(m+1)+'-'+p2(d);
+    const el=document.createElement('div'); el.className='cd'; el.textContent=d;
     const dow=dt.getDay();
-    const ds=y+'-'+p2(m+1)+'-'+p2(d);
-    if(dt<today)el.classList.add('past');
-    else if(dow===0||dow===6)el.classList.add('wknd');
-    else{
+    if (dt<today)           el.classList.add('past');
+    else if (dow===0||dow===6) el.classList.add('wknd');
+    else {
       el.classList.add('avail');
-      if(dt.toDateString()===today.toDateString())el.classList.add('today');
-      if(S.booked.some(b=>b.date===ds))el.classList.add('has-dot');
-      el.onclick=()=>pickDate(ds,d,m,y,el);
+      if (dt.toDateString()===today.toDateString()) el.classList.add('today');
+      if (S.booked.some(b=>b.date===ds&&String(b.room_id)===String(S.roomId)))
+        el.classList.add('has-dot');
+      el.onclick = () => pickDate(ds,d,m,y,el);
     }
-    if(ds===S.date)el.classList.add('picked');
+    if (ds===S.date) el.classList.add('picked');
     g.appendChild(el);
   }
 }
-function prevM(){
-  const t=new Date();S.calM--;
-  if(S.calM<0){S.calM=11;S.calY--}
-  if(S.calY<t.getFullYear()||(S.calY===t.getFullYear()&&S.calM<t.getMonth())){S.calM++;if(S.calM>11){S.calM=0;S.calY++}}
+function prevM() {
+  const t=new Date(); S.calM--;
+  if (S.calM<0){S.calM=11;S.calY--;}
+  if (S.calY<t.getFullYear()||(S.calY===t.getFullYear()&&S.calM<t.getMonth()))
+    { S.calM++; if(S.calM>11){S.calM=0;S.calY++;} }
   renderCal();
 }
-function nextM(){S.calM++;if(S.calM>11){S.calM=0;S.calY++}renderCal()}
-
-function pickDate(ds,d,m,y,el){
-  S.date=ds;S.dateStr=d+' '+MONTHS_S[m]+' '+y;
+function nextM() { S.calM++; if(S.calM>11){S.calM=0;S.calY++;} renderCal(); }
+function pickDate(ds,d,m,y,el) {
+  S.date=ds; S.dateStr=d+' '+MONTHS_S[m]+' '+y;
   document.querySelectorAll('.cd.picked').forEach(e=>e.classList.remove('picked'));
   el.classList.add('picked');
   document.getElementById('sched-dt').textContent=S.dateStr;
-  renderSchedPanel();
-  btnOk(true);
-  document.getElementById('btn-main').textContent='Выбрать время →';
-  haptic('light');
+  renderSchedPanel(); btnOk(true);
+  document.getElementById('btn-main').textContent='Выбрать время →'; haptic('light');
 }
-
-function renderSchedPanel(){
-  const body=document.getElementById('sched-body');body.innerHTML='';
-  const bkd=S.booked.filter(b=>b.date===S.date);
-  if(!bkd.length){
-    body.innerHTML='<div class="free-banner">🟢 Весь день свободен!</div>';
-    appendQuickSlots(body,bkd);return;
-  }
+function renderSchedPanel() {
+  const body=document.getElementById('sched-body'); body.innerHTML='';
+  const bkd=S.booked.filter(b=>b.date===S.date&&String(b.room_id)===String(S.roomId));
+  if (!bkd.length) { body.innerHTML='<div class="free-banner">🟢 Весь день свободен!</div>'; appendQS(body,bkd); return; }
   bkd.forEach(b=>{
-    const el=document.createElement('div');el.className='sitem';
-    el.innerHTML=`<div class="si-time">${b.start}–${b.end}</div><div class="si-who">👤 ${b.name||'—'}</div><div class="si-purpose">${b.purpose||''}</div>`;
+    const el=document.createElement('div'); el.className='sitem';
+    el.innerHTML=`<div class="si-time">${b.start_time}–${b.end_time}</div>`
+      +`<div class="si-who">👤 ${b.full_name||b.username||'—'}</div>`
+      +`<div class="si-purpose">${b.purpose||''}</div>`;
     body.appendChild(el);
   });
-  appendQuickSlots(body,bkd);
+  appendQS(body,bkd);
 }
-
-function appendQuickSlots(body,bkd){
-  const qs=findFreeSlots(bkd);
-  if(!qs.length)return;
-  const lbl=document.createElement('div');lbl.className='qlabel';lbl.textContent='Свободные окна';body.appendChild(lbl);
-  const wrap=document.createElement('div');wrap.className='quick-slots';
-  qs.forEach(q=>{
-    const b=document.createElement('div');b.className='qs';b.textContent=q.label;
-    b.onclick=()=>{S.si=q.si;S.ei=q.ei;goView('time')};
-    wrap.appendChild(b);
-  });
-  body.appendChild(wrap);
+function appendQS(body,bkd) {
+  const qs=findFree(bkd); if(!qs.length) return;
+  const l=document.createElement('div'); l.className='qlabel'; l.textContent='Свободные окна'; body.appendChild(l);
+  const w=document.createElement('div'); w.className='quick-slots';
+  qs.forEach(q=>{ const b=document.createElement('div'); b.className='qs'; b.textContent=q.label;
+    b.onclick=()=>{S.si=q.si;S.ei=q.ei;goView('time');}; w.appendChild(b); });
+  body.appendChild(w);
 }
-
-function findFreeSlots(bkd){
-  // find first 3 free 60-min blocks (2 slots)
+function findFree(bkd) {
   const r=[];
-  for(let i=0;i<SLOTS.length-2;i++){
+  for (let i=0;i<SLOTS.length-2;i++) {
     const s=SLOTS[i],e=SLOTS[i+2];
-    if(!bkd.some(b=>!(e<=b.start||s>=b.end))){
-      r.push({label:s+'–'+e,si:i,ei:i+2});
-      if(r.length>=3)break;
-    }
+    if (!bkd.some(b=>!(e<=b.start_time||s>=b.end_time))) { r.push({label:s+'–'+e,si:i,ei:i+2}); if(r.length>=3) break; }
   }
   return r;
 }
 
-// ── TIME SLOTS ──
-// KEY FIX:
-// S.si = index in SLOTS array for START time  → start = SLOTS[S.si]
-// S.ei = index in SLOTS array for END time    → end   = SLOTS[S.ei]
-// Clicking slot button i as START → S.si = i
-// Clicking slot button i as END   → S.ei = i+1  (slot i ends at SLOTS[i+1])
-//   BUT user sees label SLOTS[i] and expects end = SLOTS[i] → so END click on button i → S.ei = i
-// Highlight: buttons from S.si to S.ei-1 are highlighted (those are the 30-min blocks)
+/* ═══════════════════════════════════════════════════
+   TIME SLOTS
+═══════════════════════════════════════════════════ */
+function tmin(t) { const[h,m]=t.split(':').map(Number); return h*60+m; }
 
-function renderSlots(){
-  const bkd=S.booked.filter(b=>b.date===S.date);
-
-  // timeline booked segs
-  const tl=document.getElementById('tl');
-  tl.querySelectorAll('.tl-bk').forEach(e=>e.remove());
-  // total slots = SLOTS.length - 1 time intervals (but SLOTS.length = 19 for 09:00-18:00)
-  // timeline spans 09:00 to 18:00 = 9 hours = 18 intervals of 30min
-  const totalMins=9*60; // 09:00 to 18:00
+function renderSlots() {
+  const bkd=S.booked.filter(b=>b.date===S.date&&String(b.room_id)===String(S.roomId));
+  const tl=document.getElementById('tl'); tl.querySelectorAll('.tl-bk').forEach(e=>e.remove());
+  const total=9*60;
   bkd.forEach(b=>{
-    const sMin=timeToMins(b.start)-540; // offset from 09:00
-    const eMin=timeToMins(b.end)-540;
-    if(sMin>=0&&eMin>sMin){
-      const seg=document.createElement('div');seg.className='tl-bk';
-      seg.style.left=(sMin/totalMins*100)+'%';
-      seg.style.width=((eMin-sMin)/totalMins*100)+'%';
-      tl.appendChild(seg);
-    }
+    const sM=tmin(b.start_time)-540,eM=tmin(b.end_time)-540;
+    if(sM>=0&&eM>sM){ const seg=document.createElement('div'); seg.className='tl-bk';
+      seg.style.left=(sM/total*100)+'%'; seg.style.width=((eM-sM)/total*100)+'%'; tl.appendChild(seg); }
   });
-
-  // slot buttons: one button per 30-min interval
-  // button i covers SLOTS[i] to SLOTS[i+1]
-  // button label shows start of interval
-  const g=document.getElementById('slot-grid');g.innerHTML='';
-  // Текущее время Ташкент UTC+5
-  const _nowTZ=new Date(Date.now()+5*3600000);
-  const _todayStr=_nowTZ.toISOString().slice(0,10);
-  const _nowMin=_nowTZ.getUTCHours()*60+_nowTZ.getUTCMinutes();
-  for(let i=0;i<SLOTS.length-1;i++){
+  const g=document.getElementById('slot-grid'); g.innerHTML='';
+  const now=new Date(Date.now()+5*3600000), todayS=now.toISOString().slice(0,10), nowM=now.getUTCHours()*60+now.getUTCMinutes();
+  for (let i=0;i<SLOTS.length-1;i++) {
     const slot=SLOTS[i];
-    const isBk=bkd.some(b=>{const se=SLOTS[i+1];return !(se<=b.start||slot>=b.end)});
+    const isBk=bkd.some(b=>{ const ne=SLOTS[i+1]; return !(ne<=b.start_time||slot>=b.end_time); });
     const [sh,sm]=slot.split(':').map(Number);
-    const isPast=(S.date===_todayStr)&&(sh*60+sm<=_nowMin);
-    const el=document.createElement('div');el.className='sl';
-    const [h,m]=slot.split(':');
+    const isPast=S.date===todayS&&sh*60+sm<=nowM;
+    const el=document.createElement('div'); el.className='sl';
+    const[h,m]=slot.split(':');
     el.innerHTML=`<span class="sl-h">${h}</span><span class="sl-m">${m}</span>`;
-    el.dataset.i=i;
-    if(isBk||isPast){el.classList.add('bk')}
-    else{el.onclick=()=>clickSlot(i,bkd)}
+    if(isBk||isPast) el.classList.add('bk');
+    else el.onclick=()=>clickSlot(i,bkd);
     g.appendChild(el);
   }
-
-  // restore pre-selected (quick slot)
-  if(S.si!==null&&S.ei!==null){
-    setTV('s',SLOTS[S.si]);setTV('e',SLOTS[S.ei]);
-    setLit('s',false);setLit('e',true,'done');
-    document.getElementById('sl-mode').innerHTML='✓ Выбрано. Нажмите <b>Далее</b> или измените';
-    hlSlots();drawSelSeg();chkCfl(bkd);
+  if (S.si!==null&&S.ei!==null) {
+    stv('s',SLOTS[S.si]); stv('e',SLOTS[S.ei]);
+    lit('s',false); lit('e',true,'done');
+    document.getElementById('sl-mode').innerHTML='✓ Выбрано. Нажмите <b>Далее</b>';
+    hlS(); drawSeg(); cflCheck(bkd);
   } else {
-    S.si=null;S.ei=null;S.selEnd=false;
-    setTV('s','--:--');setTV('e','--:--');
-    setLit('s',false);setLit('e',false);
+    S.si=S.ei=null; S.selEnd=false;
+    stv('s','--:--'); stv('e','--:--'); lit('s',false); lit('e',false);
     document.getElementById('tl-sel').style.display='none';
     document.getElementById('dur').classList.remove('on');
     document.getElementById('cfl').classList.remove('on');
-    document.getElementById('sl-mode').innerHTML='Нажмите на ячейку чтобы выбрать <b>начало</b>';
+    document.getElementById('sl-mode').innerHTML='Нажмите ячейку — выберите <b>начало</b>';
     btnOk(false);
   }
 }
-
-function clickSlot(i,bkd){
+function clickSlot(i,bkd) {
   haptic('light');
-  if(!S.selEnd){
-    // ── SELECT START ──
-    // Clicking button i → start time = SLOTS[i]
-    S.si=i;S.ei=null;S.selEnd=true;
-    setTV('s',SLOTS[i]);setTV('e','--:--');
-    setLit('s',true);setLit('e',false);
+  if (!S.selEnd) {
+    S.si=i; S.ei=null; S.selEnd=true;
+    stv('s',SLOTS[i]); stv('e','--:--'); lit('s',true); lit('e',false);
     document.getElementById('sl-mode').innerHTML='Теперь выберите <b>конец</b>';
     document.getElementById('tl-sel').style.display='none';
     document.getElementById('dur').classList.remove('on');
     document.getElementById('cfl').classList.remove('on');
-    btnOk(false);
-    hlSlots();
+    btnOk(false); hlS();
   } else {
-    // ── SELECT END ──
-    // Clicking button i → end time = SLOTS[i+1] (end of this 30-min block)
-    // So S.ei = i+1
-    const newEi=i+1;
-    if(newEi<=S.si){
-      // clicked before or at start → reset start
-      S.si=i;S.selEnd=true;
-      setTV('s',SLOTS[i]);setTV('e','--:--');
-      setLit('s',true);setLit('e',false);
+    const ni=i+1;
+    if (ni<=S.si){ S.si=i; stv('s',SLOTS[i]); stv('e','--:--'); lit('s',true); lit('e',false);
       document.getElementById('tl-sel').style.display='none';
       document.getElementById('dur').classList.remove('on');
       document.getElementById('cfl').classList.remove('on');
-      hlSlots();return;
-    }
-    S.ei=newEi;S.selEnd=false;
-    setTV('e',SLOTS[S.ei]);
-    setLit('s',false);setLit('e',true,'done');
-    document.getElementById('sl-mode').innerHTML='✓ Выбрано. Нажмите <b>Далее</b> или выберите заново';
-    hlSlots();drawSelSeg();chkCfl(bkd);
+      hlS(); return; }
+    S.ei=ni; S.selEnd=false;
+    stv('e',SLOTS[S.ei]); lit('s',false); lit('e',true,'done');
+    document.getElementById('sl-mode').innerHTML='✓ Выбрано. Нажмите <b>Далее</b>';
+    hlS(); drawSeg(); cflCheck(bkd);
   }
 }
-
-function hlSlots(){
-  // Highlight buttons si to ei-1 (those are the selected 30-min blocks)
+function hlS() {
   document.querySelectorAll('.sl').forEach((el,i)=>{
     el.classList.remove('ss','se','ir');
     if(i===S.si) el.classList.add('ss');
@@ -1050,528 +1098,506 @@ function hlSlots(){
     else if(S.ei!==null&&i>S.si&&i<S.ei-1) el.classList.add('ir');
   });
 }
-
-function drawSelSeg(){
-  if(S.si===null||S.ei===null)return;
-  const totalMins=9*60;
-  const sMin=timeToMins(SLOTS[S.si])-540;
-  const eMin=timeToMins(SLOTS[S.ei])-540;
+function drawSeg() {
+  if(S.si===null||S.ei===null) return;
+  const total=9*60, sM=tmin(SLOTS[S.si])-540, eM=tmin(SLOTS[S.ei])-540;
   const sel=document.getElementById('tl-sel');
-  sel.style.display='block';
-  sel.style.left=(sMin/totalMins*100)+'%';
-  sel.style.width=((eMin-sMin)/totalMins*100)+'%';
+  sel.style.display='block'; sel.style.left=(sM/total*100)+'%'; sel.style.width=((eM-sM)/total*100)+'%';
 }
-
-function chkCfl(bkd){
-  if(S.si===null||S.ei===null)return;
-  const start=SLOTS[S.si],end=SLOTS[S.ei];
-  const cx=bkd.find(b=>!(end<=b.start||start>=b.end));
+function cflCheck(bkd) {
+  if(S.si===null||S.ei===null) return;
+  const s=SLOTS[S.si],e=SLOTS[S.ei];
+  const cx=bkd.find(b=>!(e<=b.start_time||s>=b.end_time));
   const mins=(S.ei-S.si)*30;
   const dur=mins>=60?Math.floor(mins/60)+'ч'+(mins%60?' '+mins%60+'мин':''):mins+' мин';
-  if(cx){
-    document.getElementById('cfl').classList.add('on');
-    document.getElementById('cfl-t').textContent=`Время ${cx.start}–${cx.end} уже забронировано. Выберите другой промежуток.`;
-    document.getElementById('dur').classList.remove('on');
-    btnOk(false);haptic('error');
-  } else {
-    document.getElementById('cfl').classList.remove('on');
-    document.getElementById('dur').textContent=`⏱ Длительность: ${dur.trim()}`;
-    document.getElementById('dur').classList.add('on');
-    btnOk(true);haptic('success');
-  }
+  if(cx){ document.getElementById('cfl').classList.add('on');
+    document.getElementById('cfl-t').textContent=`Время ${cx.start_time}–${cx.end_time} занято.`;
+    document.getElementById('dur').classList.remove('on'); btnOk(false); haptic('error');
+  } else { document.getElementById('cfl').classList.remove('on');
+    document.getElementById('dur').textContent='⏱ Длительность: '+dur;
+    document.getElementById('dur').classList.add('on'); btnOk(true); haptic('success'); }
 }
+function stv(w,v){ document.getElementById('tv'+w).textContent=v; }
+function lit(w,on,cls){ const el=document.getElementById('tb'+w); el.classList.remove('lit','done'); if(on) el.classList.add(cls||'lit'); }
 
-function timeToMins(t){const[h,m]=t.split(':').map(Number);return h*60+m}
-function setTV(w,v){document.getElementById('tv'+w).textContent=v}
-function setLit(w,on,cls){
-  const el=document.getElementById('tb'+w);
-  el.classList.remove('lit','done');
-  if(on)el.classList.add(cls||'lit');
-}
+/* ═══════════════════════════════════════════════════
+   PURPOSE
+═══════════════════════════════════════════════════ */
+function chkPurpose(){ btnOk(document.getElementById('purpose-in').value.trim().length>=3); }
 
-// ── PURPOSE ──
-let S_participants = 1;
-function setPart(btn){
-  document.querySelectorAll('.part-btn').forEach(b=>b.classList.remove('on'));
-  btn.classList.add('on');
-  S_participants = btn.dataset.val;
-  haptic('light');
-}
-function chkPurpose(){btnOk(document.getElementById('purpose-in').value.trim().length>=3)}
+/* ═══════════════════════════════════════════════════
+   MY BOOKINGS — shows ALL statuses incl. rejected
+═══════════════════════════════════════════════════ */
+async function renderMyBookings() {
+  const list = document.getElementById('my-list');
+  list.innerHTML = '<div class="empty-st"><div class="ei">⏳</div>Загрузка...</div>';
+  const u = getUser();
 
-// ── MY BOOKINGS ──
-async function renderMyBookings(){
-  const list=document.getElementById('my-list');
-  list.innerHTML='<div class="empty-st"><div class="ei">⏳</div>Загрузка...</div>';
-
-  const user = tg?.initDataUnsafe?.user || {};
-  const uid = user.id || 0;
-  const uname = user.username || '';
-
-  let all = [];
-  try { all = await fetchBookingsFromGH(); } catch(e){
-    list.innerHTML='<div class="empty-st"><div class="ei">⚠️</div>Ошибка загрузки</div>'; return;
-  }
-
-  // Фильтруем по user_id или username
-  const mine = all.filter(b =>
-    (uid && b.user_id == uid) ||
-    (uname && b.username === uname)
-  ).sort((a,b)=>b.id-a.id);
-
-  S.myBookings = mine;
-
-  // Dashboard (сводка)
-  const pane = document.getElementById('pane-my');
-  let dash = document.getElementById('my-dash');
-  if(!dash){
-    dash = document.createElement('div');
-    dash.id = 'my-dash';
-    dash.style.marginBottom = '10px';
-    pane.insertBefore(dash, list);
-  }
-  const cnt = {pending:0, approved:0, rejected:0};
-  mine.forEach(b=>{ cnt[b.status] = (cnt[b.status]||0)+1; });
-  const total = mine.length;
-  const next = mine
-    .filter(b=>b.status!=='rejected')
-    .sort((a,b)=> (a.date+a.start_time).localeCompare(b.date+b.start_time))[0];
-
-  dash.innerHTML = `
-    <div class="stat-row" style="margin-top:0">
-      <div class="stat-card"><div class="stat-num">${total}</div><div class="stat-lbl">Всего</div></div>
-      <div class="stat-card"><div class="stat-num">${cnt.pending||0}</div><div class="stat-lbl">Ожидают</div></div>
-      <div class="stat-card"><div class="stat-num">${cnt.approved||0}</div><div class="stat-lbl">Подтв.</div></div>
-      <div class="stat-card"><div class="stat-num">${cnt.rejected||0}</div><div class="stat-lbl">Откл.</div></div>
-    </div>
-    ${next?`
-      <div class="card" style="margin-top:10px;padding:12px">
-        <div class="cr"><div class="cr-ic">⏭️</div><div><div class="cr-lbl">Ближайшая</div><div class="cr-val">${next.room_name||next.room_id}</div></div></div>
-        <div style="margin-top:8px;font-size:12px;color:var(--muted)">📅 ${next.date} · ⏰ ${next.start_time}–${next.end_time} · ${next.status==='approved'?'✅ подтверждено':'⏳ ожидает'}</div>
-      </div>`:''}
-  `;
-  list.innerHTML='';
-
-  if(!mine.length){
-    list.innerHTML='<div class="empty-st"><div class="ei">📭</div>У вас нет бронирований</div>';
+  let rows = [];
+  try {
+    rows = await api('/api/bookings?user_id=' + encodeURIComponent(u.user_id));
+    // Also try phone if we have it and got no results
+    if (!rows.length && u.phone) {
+      const r2 = await api('/api/bookings?phone=' + encodeURIComponent(u.phone));
+      if (r2.length) rows = r2;
+    }
+  } catch(e) {
+    list.innerHTML = `<div class="empty-st"><div class="ei">⚠️</div>${EM(e)}<br><br>
+      <button class="btn btn-ghost" onclick="renderMyBookings()" style="max-width:220px;margin:0 auto">🔄 Повторить</button></div>`;
     return;
   }
 
-  const sm={approved:'✅ Подтверждено', pending:'⏳ Ожидает', rejected:'❌ Отклонено'};
-  mine.forEach(b=>{
-    const el=document.createElement('div'); el.className='bitem';
-    el.innerHTML=`
-      <div class="bi-dot ${b.status}"></div>
-      <div class="bi-info">
-        <div class="bi-room">${b.room_name||b.room_id}</div>
-        <div class="bi-time">${b.start_time}–${b.end_time}</div>
-        <div class="bi-date">📅 ${b.date} · 👥 ${b.participants||1} чел.</div>
-        <div class="bi-date">📝 ${b.purpose||''}</div>
+  // Merge localStorage tmp entries (submitted but not yet in API)
+  const tk = 'hb_tmp_' + u.user_id;
+  let tmp = []; try{ tmp = JSON.parse(localStorage.getItem(tk)||'[]'); }catch(e){}
+  tmp.forEach(t => {
+    if (!rows.some(r => r.room_id===t.room_id && r.date===t.date && r.start_time===t.start_time))
+      rows.push({...t, _tmp:true});
+  });
+  // Prune synced tmp
+  try {
+    const fresh = tmp.filter(t => !rows.some(r => !r._tmp && r.room_id===t.room_id && r.date===t.date && r.start_time===t.start_time));
+    localStorage.setItem(tk, JSON.stringify(fresh.slice(-20)));
+  } catch(e){}
+
+  // ── Mini dashboard for user ──
+  const stCnt = { approved:0, pending:0, rejected:0 };
+  rows.forEach(r => { stCnt[r.status||'pending'] = (stCnt[r.status||'pending']||0) + 1; });
+  const dash = document.getElementById('my-dash');
+  const last = rows.slice().sort((a,b)=>((b.created_at||'')+(b.date||'')).localeCompare((a.created_at||'')+(a.date||'')))[0];
+  dash.innerHTML = `
+    <div class="dash-section" style="margin-bottom:12px">
+      <div class="dash-title">📌 Сводка</div>
+      <div class="stat-row" style="margin:0">
+        <div class="stat-card"><div class="stat-num" style="font-size:26px">${stCnt.pending||0}</div><div class="stat-lbl">Ожидают</div></div>
+        <div class="stat-card"><div class="stat-num" style="font-size:26px;color:var(--green)">${stCnt.approved||0}</div><div class="stat-lbl">Подтверждено</div></div>
+        <div class="stat-card"><div class="stat-num" style="font-size:26px;color:#f1948a">${stCnt.rejected||0}</div><div class="stat-lbl">Отклонено</div></div>
       </div>
-      <span class="badge ${b.status}">${sm[b.status]||b.status}</span>`;
+      ${last?`<div style="margin-top:10px;font-size:12px;color:var(--muted);line-height:1.6">
+        Последняя отправка: <b style="color:var(--text)">${last.created_at||'—'}</b><br>
+        День брони: <b style="color:var(--text)">${last.date||'—'}</b> · <b style="color:var(--text)">${last.start_time||''}–${last.end_time||''}</b>
+      </div>`:''}
+    </div>
+  `;
+
+  list.innerHTML = '';
+  if (!rows.length) {
+    list.innerHTML = '<div class="empty-st"><div class="ei">📭</div>У вас нет бронирований</div>';
+    return;
+  }
+
+  rows.sort((a,b) => ((b.date||'')+(b.start_time||'')).localeCompare((a.date||'')+(a.start_time||'')));
+  const SM = { approved:'✅ Подтверждено', pending:'⏳ Ожидает', rejected:'❌ Отклонено' };
+
+  rows.forEach(b => {
+    const status = b.status || 'pending';
+    const el = document.createElement('div'); el.className = 'bitem';
+    const tag    = b._tmp ? ' <span style="font-size:11px;color:var(--gold)">⏱</span>' : '';
+    const dept   = b.department ? `<div class="bi-dept">🏗 ${b.department}</div>` : '';
+    const reason = b.reject_reason ? `<span class="reject-reason">📌 ${b.reject_reason}</span>` : '';
+    const canCancel = status === 'pending' && !b._tmp;
+    el.innerHTML = `
+      <div class="bitem-row">
+        <div class="bi-dot ${status}"></div>
+        <div class="bi-info" style="flex:1;min-width:0">
+          <div class="bi-room">${b.room_name||b.room_id||'—'}${tag}</div>
+          ${dept}
+          <div class="bi-time">${b.start_time}–${b.end_time}</div>
+          <div class="bi-date">📅 День брони: <b>${b.date}</b></div>
+          <div class="bi-date">🕓 Отправлено: <b>${b.created_at||"—"}</b></div>
+          ${b.purpose?`<div class="bi-date">📝 ${b.purpose}</div>`:''}
+          ${reason}
+        </div>
+        <span class="badge ${status}" style="flex-shrink:0">${SM[status]||status}</span>
+      </div>
+      ${canCancel?`<button class="cancel-btn" onclick="guestCancel(${b.id},this)">✖ Отменить бронирование</button>`:''}`;
     list.appendChild(el);
   });
 }
 
-// ── ADMIN ──
-async function renderAdminDash(){
-  if(S.role!=='admin') return;
-  document.getElementById('adm-pending-list').innerHTML=
+async function guestCancel(bid, btn) {
+  const u = getUser();
+  if (!confirm('Отменить заявку #' + bid + '?\nОтменить можно только ожидающие.')) return;
+  btn.disabled = true; btn.textContent = '⏳ Отмена...';
+  try {
+    await api('/api/bookings/' + bid + '/cancel', {
+      method: 'POST',
+      body: JSON.stringify({ user_id: u.user_id, reason: 'Отменено пользователем' })
+    }, 20000);
+    showToast('✅ Бронирование отменено');
+    await loadBooked();
+    setTimeout(() => renderMyBookings(), 500);
+  } catch (e) {
+    btn.disabled = false; btn.textContent = '✖ Отменить бронирование';
+    showToast(EM(e), 4000);
+  }
+}
+
+/* ═══════════════════════════════════════════════════
+   ADMIN DASHBOARD
+═══════════════════════════════════════════════════ */
+async function renderAdminDash() {
+  if (S.role !== 'admin') return;
+  document.getElementById('adm-pending-list').innerHTML =
     '<div class="empty-st" style="padding:14px"><div class="ei">⏳</div>Загрузка...</div>';
-  document.getElementById('adm-today-list').innerHTML='';
+  document.getElementById('adm-today-list').innerHTML = '';
+  ['adm-p','adm-t','adm-a'].forEach(id => document.getElementById(id).textContent = '…');
 
   let all = [];
   try {
-    all = await fetchBookingsFromGH();
-    S.booked = all
-      .filter(b => b.status !== 'rejected')
-      .map(b => ({room_id:b.room_id,date:b.date,start:b.start_time,end:b.end_time,
-                  name:b.full_name||b.username||'—',status:b.status}));
-  } catch(e){
-    document.getElementById('adm-pending-list').innerHTML=
-      '<div class="empty-st" style="padding:14px"><div class="ei">⚠️</div>Ошибка загрузки.<br>Проверьте соединение.</div>';
+    all = await api('/api/bookings', {}, 20000);
+  } catch(e) {
+    document.getElementById('adm-pending-list').innerHTML =
+      `<div class="empty-st" style="padding:14px"><div class="ei">⚠️</div>${EM(e)}<br><br>
+       <button class="btn btn-ghost" onclick="renderAdminDash()" style="max-width:160px;margin:0 auto">🔄 Обновить</button></div>`;
     return;
   }
 
-  // Ташкент UTC+5
-  const nowTZ = new Date(Date.now() + 5*3600000);
-  const today = nowTZ.toISOString().slice(0,10);
+  S.booked = all.filter(b=>b.status!=='rejected').map(b=>({
+    ...b, room_id:String(b.room_id||''), start_time:b.start_time||'', end_time:b.end_time||''
+  }));
 
-  const pendingItems = all
-    .filter(b => b.status === 'pending')
-    .sort((a,b) => (a.date+a.start_time).localeCompare(b.date+b.start_time));
+  const today   = new Date(Date.now()+5*3600000).toISOString().slice(0,10);
+  const pending  = all.filter(b=>b.status==='pending').sort((a,b)=>(a.date+a.start_time).localeCompare(b.date+b.start_time));
+  const upcoming = all.filter(b=>b.date>=today&&b.status!=='rejected').sort((a,b)=>(a.date+a.start_time).localeCompare(b.date+b.start_time));
+  const todayCnt = all.filter(b=>b.date===today&&b.status!=='rejected').length;
 
-  const upcomingItems = all
-    .filter(b => b.date >= today && b.status !== 'rejected')
-    .sort((a,b) => (a.date+a.start_time).localeCompare(b.date+b.start_time));
-
-  const todayCount = all.filter(b => b.date === today && b.status !== 'rejected').length;
-
-  S.adminData = {
-    pending: pendingItems.length, today: todayCount,
-    total: all.length, pendingItems, todayItems: upcomingItems,
-  };
-
-  document.getElementById('adm-p').textContent = pendingItems.length;
-  document.getElementById('adm-t').textContent = todayCount;
+  document.getElementById('adm-p').textContent = pending.length;
+  document.getElementById('adm-t').textContent = todayCnt;
   document.getElementById('adm-a').textContent = all.length;
 
-  // ── ДАШБОРД: занятость кабинетов за 7 дней ──
-  const days7 = [];
-  for(let i=0;i<7;i++){
-    const d = new Date(Date.now() + 5*3600000 - i*86400000);
-    days7.push(d.toISOString().slice(0,10));
-  }
-  const roomNames = {'GO_3':'Переговорная ГО', 'MINOR':'Офис Минор'};
-  const roomCounts = {};
-  Object.keys(roomNames).forEach(k => roomCounts[k] = 0);
-  all.forEach(b => {
-    if(days7.includes(b.date) && b.status !== 'rejected' && roomCounts[b.room_id] !== undefined)
-      roomCounts[b.room_id]++;
-  });
-  const maxRoom = Math.max(1, ...Object.values(roomCounts));
-  const dashRooms = document.getElementById('dash-rooms');
-  dashRooms.innerHTML = '';
-  Object.entries(roomCounts).forEach(([rid, cnt]) => {
-    dashRooms.innerHTML += `
-      <div class="dash-bar-row">
-        <div class="dash-bar-label">${roomNames[rid]||rid}</div>
-        <div class="dash-bar-track"><div class="dash-bar-fill" style="width:${Math.round(cnt/maxRoom*100)}%"></div></div>
-        <div class="dash-bar-val">${cnt}</div>
-      </div>`;
-  });
+  /* ── Room chart (7 days) ── */
+  const days7=[]; for(let i=0;i<7;i++){const d=new Date(Date.now()+5*3600000-i*86400000);days7.push(d.toISOString().slice(0,10));}
+  const rN={'GO_3':'Переговорная ГО','MINOR':'Офис Минор'};
+  const rC={'GO_3':0,'MINOR':0};
+  all.forEach(b=>{const r=String(b.room_id||'');if(days7.includes(b.date)&&b.status!=='rejected'&&r in rC)rC[r]++;});
+  const mxR=Math.max(1,...Object.values(rC));
+  document.getElementById('dash-rooms').innerHTML=Object.entries(rC).map(([r,c])=>
+    `<div class="dash-bar-row"><div class="dash-bar-label">${rN[r]||r}</div>
+     <div class="dash-bar-track"><div class="dash-bar-fill" style="width:${Math.round(c/mxR*100)}%;transition:width .5s"></div></div>
+     <div class="dash-bar-val">${c}</div></div>`).join('');
 
-  // ── ДАШБОРД: активность по дням (последние 7 дней) ──
-  const dayLabels = ['Сег','Вчер','2д','3д','4д','5д','6д'];
-  const dayCounts = days7.map(d => all.filter(b => b.date === d && b.status !== 'rejected').length);
-  const maxDay = Math.max(1, ...dayCounts);
-  const dashDays = document.getElementById('dash-days');
-  dashDays.innerHTML = '';
-  days7.forEach((d, i) => {
-    const cnt = dayCounts[i];
-    const pct = Math.round(cnt/maxDay*100);
-    dashDays.innerHTML += `
-      <div class="dash-bar-row">
-        <div class="dash-bar-label" style="width:50px">${dayLabels[i]}</div>
-        <div class="dash-bar-track"><div class="dash-bar-fill green" style="width:${pct}%"></div></div>
-        <div class="dash-bar-val" style="color:#2ecc71">${cnt}</div>
-      </div>`;
-  });
+  /* ── Day chart ── */
+  const dayL=['Сег','Вчер','2д','3д','4д','5д','6д'];
+  const dayC=days7.map(d=>all.filter(b=>b.date===d&&b.status!=='rejected').length);
+  const mxD=Math.max(1,...dayC);
+  document.getElementById('dash-days').innerHTML=days7.map((d,i)=>
+    `<div class="dash-bar-row"><div class="dash-bar-label" style="width:52px">${dayL[i]}</div>
+     <div class="dash-bar-track"><div class="dash-bar-fill green" style="width:${Math.round(dayC[i]/mxD*100)}%;transition:width .5s"></div></div>
+     <div class="dash-bar-val" style="color:#2ecc71">${dayC[i]}</div></div>`).join('');
 
-  // ── СПИСКИ ──
-  const pl = document.getElementById('adm-pending-list'); pl.innerHTML='';
-  if(!pendingItems.length){
-    pl.innerHTML='<div class="empty-st" style="padding:14px"><div class="ei">✅</div>Нет ожидающих заявок</div>';
+  /* ── Dept chart ── */
+  const dEl=document.getElementById('dash-dept');
+  if(dEl){
+    const dc={};
+    all.filter(b=>b.department&&b.status!=='rejected').forEach(b=>{dc[b.department]=(dc[b.department]||0)+1;});
+    const srt=Object.entries(dc).sort((a,b)=>b[1]-a[1]).slice(0,6);
+    const mxDept=Math.max(1,...srt.map(e=>e[1]));
+    dEl.innerHTML=srt.length?srt.map(([d,c])=>
+      `<div class="dash-bar-row"><div class="dash-bar-label">${d}</div>
+       <div class="dash-bar-track"><div class="dash-bar-fill yellow" style="width:${Math.round(c/mxDept*100)}%;transition:width .5s"></div></div>
+       <div class="dash-bar-val" style="color:#f1c40f">${c}</div></div>`).join('')
+    :'<div style="font-size:13px;color:var(--muted)">Нет данных</div>';
   }
-  pendingItems.forEach(b => pl.appendChild(makePCard(b)));
 
-  const tl2 = document.getElementById('adm-today-list'); tl2.innerHTML='';
-  if(!upcomingItems.length){
-    tl2.innerHTML='<div class="empty-st" style="padding:14px"><div class="ei">📅</div>Нет предстоящих бронирований</div>';
-  }
-  upcomingItems.forEach(b => tl2.appendChild(makeTCard(b)));
+  /* ── Pending cards ── */
+  const pl=document.getElementById('adm-pending-list'); pl.innerHTML='';
+  if(!pending.length) pl.innerHTML='<div class="empty-st" style="padding:14px"><div class="ei">✅</div>Нет ожидающих</div>';
+  pending.forEach(b=>pl.appendChild(mkPCard(b)));
+
+  /* ── Upcoming list ── */
+  const ul=document.getElementById('adm-today-list'); ul.innerHTML='';
+  if(!upcoming.length) ul.innerHTML='<div class="empty-st" style="padding:14px"><div class="ei">📅</div>Нет предстоящих</div>';
+  upcoming.forEach(b=>ul.appendChild(mkTCard(b)));
 }
 
-function makePCard(b){
-  const el=document.createElement('div');el.className='pending-card';el.id='pc-'+b.id;
+function mkPCard(b) {
+  const el=document.createElement('div'); el.className='pending-card'; el.id='pc-'+b.id;
+  const dept=b.department?`<br>🏗 <b>${b.department}</b>`:'';
+  const ph=b.phone?` · 📞 ${b.phone}`:'';
   el.innerHTML=`
-    <div class="pc-head"><span>${b.room_id==='GO_3'?'🏛':'🏢'}</span><span class="pc-room">${b.room_name||b.room_id}</span><span class="pc-id">#${b.id}</span></div>
-    <div class="pc-details">📅 <b>${b.date}</b> · ⏰ <b>${b.start_time}–${b.end_time}</b><br>👤 <b>${b.full_name||b.username||'—'}</b> · 📝 ${b.purpose||'—'}</div>
+    <div class="pc-head">
+      <span>${String(b.room_id)==='GO_3'?'🏛':'🏢'}</span>
+      <span class="pc-room">${b.room_name||b.room_id}</span>
+      <span class="pc-id">#${b.id}</span>
+    </div>
+    <div class="pc-details">
+      📅 <b>${b.date}</b> · ⏰ <b>${b.start_time}–${b.end_time}</b><br>
+      👤 <b>${b.full_name||b.username||'—'}</b>${ph}<br>
+      📝 ${b.purpose||'—'}${dept}
+    </div>
     <div class="pc-btns">
-      <button class="pc-btn pc-ok" onclick="adminAct(${b.id},'approve',this)">✅ Подтвердить</button>
-      <button class="pc-btn pc-no" onclick="adminAct(${b.id},'reject',this)">❌ Отклонить</button>
-      <button class="pc-btn pc-edit" onclick="adminAct(${b.id},'delete',this)">🗑️ Отменить</button>
-      <button class="pc-btn pc-edit" onclick="openEdit(${b.id},'${b.date}','${b.start_time}','${b.end_time}','${(b.purpose||'').replace(/'/g,"\\'")}')">✏️</button>
+      <button class="pc-btn pc-ok" onclick="adminAct(${b.id},'approved')">✅ Подтвердить</button>
+      <button class="pc-btn pc-no" onclick="openReject(${b.id})">❌ Отклонить</button>
+      <button class="pc-btn pc-edit" onclick="openEdit(${b.id},'${b.date}','${b.start_time}','${b.end_time}','${(b.purpose||'').replace(/\\/g,'\\\\').replace(/'/g,"\\'")}')">✏️</button>
+      <button class="pc-btn pc-edit pc-del" onclick="adminDel(${b.id})">🗑</button>
     </div>`;
   return el;
 }
 
-function makeTCard(b){
-  const el=document.createElement('div');el.className='bitem';
-  const sm={approved:'✅ Подтверждено',pending:'⏳ Ожидает',rejected:'❌ Отклонено'};
-  const today = new Date().toISOString().slice(0,10);
-  const dateLabel = b.date === today ? '📅 Сегодня' : '📅 ' + b.date;
-  const sent = b.created_at ? ('🕓 Отправлено: ' + b.created_at) : '';
-
+function mkTCard(b) {
+  const el=document.createElement('div'); el.className='bitem';
+  const SM={approved:'✅ Подтверждено',pending:'⏳ Ожидает',rejected:'❌ Отклонено'};
+  const today=new Date(Date.now()+5*3600000).toISOString().slice(0,10);
+  const dept=b.department?`<div class="bi-dept">🏗 ${b.department}</div>`:'';
   el.innerHTML=`
-    <div class="bi-dot ${b.status}"></div>
-    <div class="bi-info">
-      <div class="bi-room">${b.room_name||b.room_id} <span style="font-size:10px;color:var(--muted);font-weight:400">#${b.id}</span></div>
-      <div class="bi-time">${dateLabel} · ${b.start_time}–${b.end_time}</div>
-      <div class="bi-date">👤 ${b.full_name||'—'} · 📝 ${b.purpose||'—'}</div>
-    </div>
-    <span class="badge ${b.status}">${sm[b.status]||b.status}</span>`;
+    <div class="bitem-row">
+      <div class="bi-dot ${b.status}"></div>
+      <div class="bi-info" style="flex:1;min-width:0">
+        <div class="bi-room">${b.room_name||b.room_id} <span style="font-size:12px;color:var(--muted);font-weight:400">#${b.id}</span></div>
+        ${dept}
+        <div class="bi-time">${b.date===today?'📅 Сегодня':'📅 '+b.date} · ${b.start_time}–${b.end_time}</div>
+        <div class="bi-date">👤 ${b.full_name||'—'} · 📝 ${b.purpose||'—'}</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex-shrink:0">
+        <span class="badge ${b.status}">${SM[b.status]||b.status}</span>
+        ${b.status!=='rejected'?`<button class="pc-btn pc-no" style="font-size:12px;padding:6px 10px;flex:none"
+          onclick="openReject(${b.id})">❌ Отменить</button>`:''}
+      </div>
+    </div>`;
   return el;
 }
 
-async function adminAct(bid, action, btn){
+/* ═══════════════════════════════════════════════════
+   ADMIN ACTIONS
+═══════════════════════════════════════════════════ */
+async function adminAct(bid, newStatus, reason) {
   const card = document.getElementById('pc-'+bid);
-
-  if(card){
-    card.style.opacity='.45';
-    card.style.pointerEvents='none';
-    card.style.transition='opacity .2s';
-  }
-  haptic(action==='approve'?'success':'warning');
-
-  try{
-    if(action==='delete'){
-      await deleteBooking(bid);
-      showToast('🗑️ Заявка удалена');
-    } else {
-      const newStatus = action==='approve' ? 'approved' : (action==='pending' ? 'pending' : 'rejected');
-      await updateBookingStatus(bid, newStatus);
-      showToast(newStatus==='approved'?'✅ Подтверждено':(newStatus==='pending'?'⏳ Возвращено в ожидание':'❌ Отклонено'));
-    }
-
-    await refreshBooked(true);
-    renderAdminDash();
-    renderMyBookings();
-
-  }catch(e){
-    console.error(e);
-    const msg = String(e?.message||'');
-    if(msg.includes('bad_password')) alert('Неверный пароль администратора');
-    else if(msg.includes('conflict')) alert('Конфликт времени: уже занято');
-    else alert('Ошибка действия: ' + msg);
-  }finally{
-    if(card){
-      card.style.opacity='1';
-      card.style.pointerEvents='auto';
-    }
+  if (card) { card.style.opacity='.5'; card.style.pointerEvents='none'; }
+  showToast(newStatus==='approved'?'⏳ Подтверждаем...':'⏳ Отклоняем...', 25000);
+  haptic(newStatus==='approved'?'success':'warning');
+  try {
+    const body = { admin_password:ADMIN_PASS, status:newStatus };
+    if (reason) body.reject_reason = reason;
+    await api('/api/bookings/'+bid+'/status', { method:'POST', body:JSON.stringify(body) }, 20000);
+    if (card) card.remove();
+    const p = parseInt(document.getElementById('adm-p').textContent)||0;
+    document.getElementById('adm-p').textContent = Math.max(0,p-1);
+    showToast(newStatus==='approved'?'✅ Подтверждено!':'❌ Отклонено');
+    setTimeout(()=>renderAdminDash(), 600);
+  } catch(e) {
+    if (card) { card.style.opacity='1'; card.style.pointerEvents=''; }
+    showToast(EM(e), 4000);
   }
 }
 
-async function updateBookingStatus(bid, newStatus){
-  const pass = (S.adminPass || document.getElementById('l-p')?.value || '').trim();
-  const r = await fetch(API_BASE + '/api/bookings/' + encodeURIComponent(bid) + '/status', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({status:newStatus, admin_password: pass})
-  });
-  const j = await r.json().catch(()=>({}));
-  if(!r.ok) throw new Error(j.error || ('api_status_' + r.status));
-  return j;
-}
-async function deleteBooking(bid){
-  const pass = (S.adminPass || document.getElementById('l-p')?.value || '').trim();
-  const r = await fetch(API_BASE + '/api/bookings/' + encodeURIComponent(bid), {
-    method:'DELETE',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({admin_password: pass})
-  });
-  const j = await r.json().catch(()=>({}));
-  if(!r.ok) throw new Error(j.error || ('api_delete_' + r.status));
-  return j;
+async function adminDel(bid) {
+  if (!confirm('Удалить заявку #'+bid+' навсегда?')) return;
+  const card = document.getElementById('pc-'+bid);
+  if (card) { card.style.opacity='.5'; card.style.pointerEvents='none'; }
+  showToast('⏳ Удаляем...', 20000);
+  try {
+    await api('/api/bookings/'+bid, { method:'DELETE', body:JSON.stringify({admin_password:ADMIN_PASS}) }, 20000);
+    if (card) card.remove();
+    showToast('🗑 Заявка #'+bid+' удалена');
+    setTimeout(()=>renderAdminDash(), 500);
+  } catch(e) {
+    if (card) { card.style.opacity='1'; card.style.pointerEvents=''; }
+    showToast(EM(e), 4000);
+  }
 }
 
+/* ── Reject / Cancel with reason ── */
+function openReject(bid) {
+  document.getElementById('rej-bid').value = bid;
+  document.getElementById('rej-reason').value = '';
+  document.getElementById('reject-modal').classList.add('on');
+}
+function closeRejectModal() { document.getElementById('reject-modal').classList.remove('on'); }
+function doReject() {
+  const bid    = parseInt(document.getElementById('rej-bid').value);
+  const reason = document.getElementById('rej-reason').value.trim();
+  closeRejectModal();
+  adminAct(bid, 'rejected', reason);
+}
 
-// ── EDIT MODAL ──
-function openEdit(bid,date,start,end,purpose){
-  document.getElementById('edit-bid').value=bid;
-  document.getElementById('edit-date').value=date;
-  document.getElementById('edit-start').value=start;
-  document.getElementById('edit-end').value=end;
-  document.getElementById('edit-purpose').value=purpose;
+/* ── Edit modal ── */
+function openEdit(bid,date,start,end,purpose) {
+  document.getElementById('edit-bid').value     = bid;
+  document.getElementById('edit-date').value    = date;
+  document.getElementById('edit-start').value   = start;
+  document.getElementById('edit-end').value     = end;
+  document.getElementById('edit-purpose').value = purpose;
+  document.getElementById('reason-wrap').style.display = 'none';
   document.getElementById('edit-modal').classList.add('on');
 }
-function closeModal(){document.getElementById('edit-modal').classList.remove('on')}
-
-async function saveEdit(){
-  const bid  = parseInt(document.getElementById('edit-bid').value);
-  const data = {
-    date:    document.getElementById('edit-date').value,
-    start_time: document.getElementById('edit-start').value,
-    end_time:   document.getElementById('edit-end').value,
-    purpose:    document.getElementById('edit-purpose').value,
-  };
-  const card = document.getElementById('pc-'+bid);
-  if(card){card.style.opacity='.5';card.style.pointerEvents='none';}
+function closeModal() { document.getElementById('edit-modal').classList.remove('on'); }
+async function saveEdit() {
+  const bid = parseInt(document.getElementById('edit-bid').value);
+  const ns  = document.getElementById('edit-start').value;
+  const ne  = document.getElementById('edit-end').value;
+  if (tmin(ne)<=tmin(ns)) { showToast('⚠️ Конец должен быть позже начала'); return; }
   closeModal(); haptic('success');
-
   try {
-    const resp = await fetch(GH_API, {
-      headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json'}
-    });
-    const meta = await resp.json();
-    const sha = meta.sha;
-    const b64 = meta.content.replace(/\n/g,'');
-    const bytes = new Uint8Array(atob(b64).split('').map(c=>c.charCodeAt(0)));
-    const bookings = JSON.parse(new TextDecoder('utf-8').decode(bytes));
-    const idx = bookings.findIndex(b=>b.id===bid);
-    if(idx!==-1) Object.assign(bookings[idx], data);
-    const content = JSON.stringify(bookings,null,2);
-    const enc=new TextEncoder(); const byt=enc.encode(content);
-    let bin=''; byt.forEach(b=>bin+=String.fromCharCode(b));
-    await fetch(GH_API,{method:'PUT',headers:{'Authorization':'token '+GH_TOKEN,'Accept':'application/vnd.github.v3+json','Content-Type':'application/json'},body:JSON.stringify({message:'Edit booking #'+bid,content:btoa(bin),sha})});
-    setTimeout(()=>renderAdminDash(), 1500);
-  } catch(e){ console.error('saveEdit error:',e); }
+    await api('/api/bookings/'+bid, {
+      method: 'PATCH',
+      body: JSON.stringify({
+        admin_password: ADMIN_PASS,
+        date:       document.getElementById('edit-date').value,
+        start_time: ns, end_time: ne,
+        purpose:    document.getElementById('edit-purpose').value,
+      })
+    }, 20000);
+    showToast('✅ Изменения сохранены');
+    setTimeout(()=>renderAdminDash(), 500);
+  } catch(e) { showToast(EM(e), 4000); }
 }
+function confirmDelete() { const bid=parseInt(document.getElementById('edit-bid').value); closeModal(); adminDel(bid); }
 
-// ── NAVIGATION ──
-function btnOk(ok){document.getElementById('btn-main').disabled=!ok}
-
-function btnClick(){
-  if(S.view==='home') goView('date');
-  else if(S.view==='date') goView('time');
-  else if(S.view==='time'){
-    document.getElementById('cf-rm').textContent=S.roomName;
-    document.getElementById('cf-dt').textContent=S.dateStr;
-    document.getElementById('cf-tm').textContent=SLOTS[S.si]+' – '+SLOTS[S.ei];
-    document.getElementById('purpose-in').value='';
-    goView('purpose');btnOk(false);
+/* ═══════════════════════════════════════════════════
+   NAVIGATION
+═══════════════════════════════════════════════════ */
+function btnOk(ok) { document.getElementById('btn-main').disabled = !ok; }
+function btnClick() {
+  if      (S.view==='home')    goView('date');
+  else if (S.view==='date')    goView('time');
+  else if (S.view==='time') {
+    document.getElementById('cf-rm').textContent = S.roomName;
+    document.getElementById('cf-dt').textContent = S.dateStr;
+    document.getElementById('cf-tm').textContent = SLOTS[S.si]+' – '+SLOTS[S.ei];
+    document.getElementById('purpose-in').value = '';
+    goView('purpose'); btnOk(false);
   }
-  else if(S.view==='purpose') submit();
+  else if (S.view==='purpose') submit();
 }
-
-function goBack(){
+function goBack() {
   const prev={login:'splash',date:'home',time:'date',purpose:'time'};
-  if(prev[S.view])goView(prev[S.view]);
+  if(prev[S.view]) goView(prev[S.view]);
 }
-
-const PROGRESS_MAP={home:15,date:40,time:65,purpose:85,ok:100};
-
-function goView(v){
-  S.view=v;
+const PM = {home:15,date:40,time:65,purpose:85,ok:100};
+function goView(v) {
+  S.view = v;
   document.querySelectorAll('.screen').forEach(s=>s.classList.remove('on'));
-  const vm={splash:'sc-splash',login:'sc-login',home:'sc-home',date:'sc-date',time:'sc-time',purpose:'sc-purpose',ok:'sc-ok'};
-  document.getElementById(vm[v]).classList.add('on');
-
-  const topbar=document.getElementById('topbar');
-  const pbar=document.getElementById('pbar');
-  const botbar=document.getElementById('botbar');
-  const tabsbar=document.getElementById('tabs-bar');
-  const back=document.getElementById('tb-back');
-
+  const VM={splash:'sc-splash',login:'sc-login',home:'sc-home',date:'sc-date',time:'sc-time',purpose:'sc-purpose',ok:'sc-ok'};
+  document.getElementById(VM[v]).classList.add('on');
+  const tp=document.getElementById('topbar'),pb=document.getElementById('pbar'),
+        bb=document.getElementById('botbar'),tb=document.getElementById('tabs-bar'),
+        bk=document.getElementById('tb-back');
   if(v==='splash'||v==='login'){
-    topbar.style.display='none';pbar.style.display='none';
-    botbar.style.display='none';tabsbar.style.display='none';
-    return;
+    tp.style.display='none';pb.style.display='none';bb.style.display='none';tb.style.display='none';return;
   }
-
-  topbar.style.display='flex';pbar.style.display='block';
-  document.getElementById('pfill').style.width=(PROGRESS_MAP[v]||0)+'%';
-
-  back.classList.toggle('on',v!=='home'&&v!=='ok');
-
-  const titles={home:S.role==='admin'?'Администратор':'Добро пожаловать',date:'Выбор даты',time:'Выбор времени',purpose:'Детали заявки',ok:'Готово!'};
-  const subs={home:'Hayot Bank',date:S.roomName||'',time:S.dateStr||'',purpose:'Проверьте данные',ok:''};
-  document.getElementById('tb-t').textContent=titles[v]||'';
-  document.getElementById('tb-s').textContent=subs[v]||'';
-
+  tp.style.display='flex'; pb.style.display='block';
+  document.getElementById('pfill').style.width=(PM[v]||0)+'%';
+  bk.classList.toggle('on',v!=='home'&&v!=='ok');
+  const TT={home:S.role==='admin'?'Администратор':'Добро пожаловать',date:'Выбор даты',time:'Выбор времени',purpose:'Детали заявки',ok:'Готово!'};
+  const TS={home:'Hayot Bank',date:S.roomName||'',time:S.dateStr||'',purpose:'Проверьте данные',ok:''};
+  document.getElementById('tb-t').textContent=TT[v]||'';
+  document.getElementById('tb-s').textContent=TS[v]||'';
   if(v==='home'){
-    tabsbar.style.display='block';
-    if(S.tab==='book'){botbar.style.display='block';btnOk(!!S.roomId)}
-    else botbar.style.display='none';
-  } else {
-    tabsbar.style.display='none';
-    if(v==='ok') botbar.style.display='none';
-    else botbar.style.display='block';
-  }
-
-  const btxt={home:'Выбрать дату →',date:'Выбрать время →',time:'К деталям →',purpose:'✅ Отправить заявку'};
-  document.getElementById('btn-main').textContent=btxt[v]||'Далее →';
-
-  if(v==='date'){renderCal();if(S.date)renderSchedPanel();btnOk(!!S.date)}
-  if(v==='time'){renderSlots();if(S.si===null)btnOk(false)}
+    tb.style.display='block';
+    if(S.tab==='book'){bb.style.display='block';btnOk(!!S.roomId);}
+    else bb.style.display='none';
+  } else { tb.style.display='none'; bb.style.display=v==='ok'?'none':'block'; }
+  const BT={home:'Выбрать дату →',date:'Выбрать время →',time:'К деталям →',purpose:'✅ Отправить заявку'};
+  document.getElementById('btn-main').textContent=BT[v]||'Далее →';
+  if(v==='date'){renderCal();if(S.date)renderSchedPanel();btnOk(!!S.date);}
+  if(v==='time'){renderSlots();if(S.si===null)btnOk(false);}
   if(v==='purpose') chkPurpose();
-
   document.querySelector('.page').scrollTop=0;
 }
 
-async function submit(){
-  const purpose = document.getElementById('purpose-in').value.trim();
-  if(!purpose){ alert('Укажите цель встречи'); return; }
-
-  const user = tg?.initDataUnsafe?.user || {};
-  const booking = {
-    room_id:      S.roomId,
-    room_name:    S.roomName,
-    date:         S.date,
-    start_time:   SLOTS[S.si],
-    end_time:     SLOTS[S.ei],
-    purpose:      purpose,
-    participants: String(S_participants),
-    phone:        (document.getElementById('phone-in').value||'').trim(),
-    user_id:      user.id || 0,
-    username:     user.username || '',
-    full_name:    [user.first_name, user.last_name].filter(Boolean).join(' ') || user.username || 'Сотрудник',
-    status:       'pending',
-    created_at:   new Date(Date.now()+5*3600000).toISOString().slice(0,19).replace('T',' '),
+/* ═══════════════════════════════════════════════════
+   SUBMIT
+═══════════════════════════════════════════════════ */
+async function submit() {
+  const purpose=(document.getElementById('purpose-in').value||'').trim();
+  if(!purpose){alert('Укажите цель встречи');return;}
+  const u    = getUser();
+  const phone= (document.getElementById('phone-in')?.value||'').trim()||u.phone;
+  if(phone) localStorage.setItem('hb_phone',phone);
+  const dept = (document.getElementById('dept-in')?.value||'').trim();
+  const bk   = {
+    room_id:S.roomId, room_name:S.roomName, date:S.date,
+    start_time:SLOTS[S.si], end_time:SLOTS[S.ei],
+    purpose, department:dept, phone,
+    user_id:u.user_id, username:u.username,
+    full_name:u.full_name||'Сотрудник',
+    chat_id:u.chat_id, status:'pending',
+    created_at:new Date(Date.now()+5*3600000).toISOString().slice(0,19).replace('T',' '),
   };
-
+  // Show success screen immediately
   document.getElementById('ok-card').innerHTML=`
-    <div class="cr"><div class="cr-ic">🏢</div><div><div class="cr-lbl">Кабинет</div><div class="cr-val">${booking.room_name}</div></div></div>
+    <div class="cr"><div class="cr-ic">🏢</div><div><div class="cr-lbl">Кабинет</div><div class="cr-val">${bk.room_name}</div></div></div>
     <div class="cr"><div class="cr-ic">📅</div><div><div class="cr-lbl">Дата</div><div class="cr-val">${S.dateStr}</div></div></div>
-    <div class="cr"><div class="cr-ic">🕐</div><div><div class="cr-lbl">Время</div><div class="cr-val">${booking.start_time} – ${booking.end_time}</div></div></div>
-    <div class="cr"><div class="cr-ic">👥</div><div><div class="cr-lbl">Участников</div><div class="cr-val">${booking.participants}</div></div></div>`;
-
+    <div class="cr"><div class="cr-ic">🕐</div><div><div class="cr-lbl">Время</div><div class="cr-val">${bk.start_time} – ${bk.end_time}</div></div></div>
+    ${dept?`<div class="cr"><div class="cr-ic">🏗</div><div><div class="cr-lbl">Подразделение</div><div class="cr-val">${dept}</div></div></div>`:''}
+    <div class="cr"><div class="cr-ic">🕓</div><div><div class="cr-lbl">Отправлено</div><div class="cr-val">${bk.created_at}</div></div></div>`;
   goView('ok'); haptic('success');
-
-  try {
-    const saved = await ghWrite(booking);
-    await notifyAdmins(saved);
-  } catch(e){
-    console.error('Submit error:', e);
+  // Save tmp to localStorage (visible in "Мои заявки" before API responds)
+  try{
+    const k='hb_tmp_'+u.user_id;
+    const a=JSON.parse(localStorage.getItem(k)||'[]');
+    a.push({...bk,id:'tmp_'+Date.now(),_tmp:true});
+    localStorage.setItem(k,JSON.stringify(a.slice(-20)));
+  }catch(e){}
+  // POST to API (25s timeout — server may be waking)
+  try{
+    const saved=await api('/api/bookings',{method:'POST',body:JSON.stringify(bk)},25000);
+    showToast('✅ Заявка #'+saved.id+' принята');
+    await loadBooked();
+  }catch(e){
+    showToast('⚠️ Ошибка отправки. Повторите позже.', 5000);
   }
 }
 
-// ── Запись в GitHub ──
-async function ghWrite(booking){
-  const r = await fetch(API_BASE + '/api/bookings', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify(booking)
-  });
-  const j = await r.json().catch(()=>({}));
-  if(!r.ok) throw new Error(j.error || ('api_create_' + r.status));
-  return j;
+/* ═══════════════════════════════════════════════════
+   AUTO REFRESH
+═══════════════════════════════════════════════════ */
+let _aTimer=null, _aHash='';
+function startAdminRefresh(){
+  if(_aTimer) clearInterval(_aTimer);
+  _aTimer=setInterval(async()=>{
+    if(S.role!=='admin'||S.tab!=='admin') return;
+    try{
+      const all=await api('/api/bookings',{},15000);
+      const h=all.map(b=>b.id+'|'+b.status+'|'+(b.reject_reason||'')).join(',');
+      if(h===_aHash) return;
+      _aHash=h; renderAdminDash();
+    }catch(e){}
+  },20000);
+}
+let _uTimer=null;
+function startUserRefresh(){
+  if(_uTimer) clearInterval(_uTimer);
+  _uTimer=setInterval(async()=>{
+    try{
+      await loadBooked();
+      if(S.view==='date'){renderCal();if(S.date)renderSchedPanel();}
+      if(S.view==='time') renderSlots();
+    }catch(e){}
+  },30000);
 }
 
-// ── Уведомление администраторам с кнопками ──
-function notifyAdmins(b){ /* уведомления отключены в WebApp (делается на сервере) */ }
-
-
-function haptic(t){try{if(tg?.HapticFeedback){if(t==='light')tg.HapticFeedback.impactOccurred('light');else tg.HapticFeedback.notificationOccurred(t==='success'?'success':t==='error'?'error':'warning');}}catch(e){}}
-
-function showToast(msg, dur=2500){
-  let t = document.getElementById('_toast');
+/* ═══════════════════════════════════════════════════
+   UTILS
+═══════════════════════════════════════════════════ */
+function haptic(t){
+  try{ if(tg?.HapticFeedback){
+    if(t==='light') tg.HapticFeedback.impactOccurred('light');
+    else tg.HapticFeedback.notificationOccurred(t==='success'?'success':t==='error'?'error':'warning');
+  }}catch(e){}
+}
+function showToast(msg,dur=2500){
+  let t=document.getElementById('_toast');
   if(!t){
-    t = document.createElement('div'); t.id='_toast';
-    t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);background:#1a3a4a;border:1px solid rgba(232,89,58,.4);color:#fff;padding:10px 20px;border-radius:20px;font-size:13px;font-weight:600;z-index:9999;opacity:0;transition:all .25s;pointer-events:none;white-space:nowrap';
+    t=document.createElement('div');t.id='_toast';
+    t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(20px);'
+      +'background:#1a3a4a;border:1px solid rgba(232,89,58,.5);color:#fff;'
+      +'padding:12px 22px;border-radius:22px;font-size:14px;font-weight:600;'
+      +'z-index:9999;opacity:0;transition:all .25s;pointer-events:none;'
+      +'max-width:88vw;text-align:center;white-space:pre-wrap';
     document.body.appendChild(t);
   }
-  t.textContent = msg;
-  t.style.opacity='1'; t.style.transform='translateX(-50%) translateY(0)';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(()=>{ t.style.opacity='0'; t.style.transform='translateX(-50%) translateY(20px)'; }, dur);
+  t.textContent=msg;t.style.opacity='1';t.style.transform='translateX(-50%) translateY(0)';
+  clearTimeout(t._t);
+  t._t=setTimeout(()=>{t.style.opacity='0';t.style.transform='translateX(-50%) translateY(20px)';},dur);
 }
 
-// ── Кэш данных для быстрой загрузки ──
-let _ghCache = null;
-let _ghCacheTime = 0;
-async function fetchBookingsFromGH(forceRefresh=false){
-  const r = await fetch(API_BASE + '/api/bookings?t=' + Date.now(), {cache:'no-store'});
-  if(!r.ok) throw new Error('api_list_' + r.status);
-  return await r.json();
-}
-
-// ghRead всегда свежие данные (для записи)
-async function ghRead(){
-  const r = await fetch(API_BASE + '/api/bookings?t=' + Date.now(), {cache:'no-store'});
-  if(!r.ok) throw new Error('api_list_' + r.status);
-  const list = await r.json();
-  return {list: Array.isArray(list)?list:[], sha:''};
-}
-
-
-// ── Авто-обновление для админа каждые 30 сек ──
-let _adminTimer = null;
-function startAdminRefresh(){
-  if(_adminTimer) clearInterval(_adminTimer);
-  _adminTimer = setInterval(()=>{ if(S.role==='admin'&&S.tab==='admin') renderAdminDash(); }, 30000);
-}
-
+/* ═══════════════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════════════ */
+loadBooked().then(()=>{ try{renderCal();}catch(e){} });
+startUserRefresh();
 goView('splash');
 </script>
 </body>
