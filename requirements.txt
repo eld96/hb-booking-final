@@ -3,3 +3,4 @@ flask-cors
 requests
 openpyxl
 gunicorn
+psycopg2-binary
