@@ -55,8 +55,16 @@ def init_db():
       purpose      TEXT NOT NULL,
       participants TEXT,
       status       TEXT NOT NULL DEFAULT 'pending',
-      chat_id      TEXT
+      chat_id      TEXT,
+      department   TEXT,
+      reject_reason TEXT
     )""")
+    # Migrate: add new columns if they don't exist yet
+    for col, typedef in [("department","TEXT"), ("reject_reason","TEXT")]:
+        try:
+            con.execute(f"ALTER TABLE bookings ADD COLUMN {col} {typedef}")
+        except Exception:
+            pass
     con.commit()
     con.close()
 
@@ -173,7 +181,7 @@ def notify_user(booking: dict, status: str):
     )
     bg(tg_send, int(chat_id), text)
 
-def set_status(bid: int, status: str) -> Optional[dict]:
+def set_status(bid: int, status: str, reject_reason: str = "") -> Optional[dict]:
     b = get_booking(bid)
     if not b:
         return None
@@ -183,7 +191,10 @@ def set_status(bid: int, status: str) -> Optional[dict]:
         return None  # конфликт
 
     con = db()
-    con.execute("UPDATE bookings SET status=? WHERE id=?", (status, bid))
+    if reject_reason:
+        con.execute("UPDATE bookings SET status=?, reject_reason=? WHERE id=?", (status, reject_reason, bid))
+    else:
+        con.execute("UPDATE bookings SET status=? WHERE id=?", (status, bid))
     con.commit()
     con.close()
     bg(export_excel)
@@ -324,8 +335,8 @@ def api_create():
     cur = con.execute("""
       INSERT INTO bookings
         (created_at,user_id,username,full_name,phone,room_id,room_name,
-         date,start_time,end_time,purpose,participants,status,chat_id)
-      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?)
+         date,start_time,end_time,purpose,participants,status,chat_id,department)
+      VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)
     """, (
         datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         str(p.get("user_id", "0")),
@@ -339,6 +350,7 @@ def api_create():
         str(p.get("participants", "1")),
         "pending",
         str(p.get("chat_id", p.get("user_id", ""))),
+        str(p.get("department", "")),
     ))
     bid = cur.lastrowid
     con.commit()
@@ -364,12 +376,39 @@ def api_status(bid: int):
     if not b:
         return jsonify({"error": "not_found"}), 404
 
-    result = set_status(bid, status)
+    reject_reason = str(p.get("reject_reason", ""))
+    result = set_status(bid, status, reject_reason)
     if result is None:
         return jsonify({"error": "conflict"}), 409
 
-    notify_user(b, status)
+    notify_user(b, status, reject_reason)
     return jsonify(result), 200
+
+
+@app.route("/api/bookings/<int:bid>", methods=["PATCH"])
+def api_patch(bid: int):
+    p = request.get_json(force=True, silent=True) or {}
+    if str(p.get("admin_password", "")) != ADMIN_PASSWORD:
+        return jsonify({"error": "bad_password"}), 403
+    b = get_booking(bid)
+    if not b:
+        return jsonify({"error": "not_found"}), 404
+    date_s  = str(p.get("date",       b["date"]))
+    start_t = str(p.get("start_time", b["start_time"]))
+    end_t   = str(p.get("end_time",   b["end_time"]))
+    purpose = str(p.get("purpose",    b["purpose"]))
+    if tmin(end_t) <= tmin(start_t):
+        return jsonify({"error": "invalid time range"}), 400
+    if has_conflict(b["room_id"], date_s, start_t, end_t, ignore_id=bid):
+        return jsonify({"error": "conflict"}), 409
+    con = db()
+    con.execute(
+        "UPDATE bookings SET date=?,start_time=?,end_time=?,purpose=? WHERE id=?",
+        (date_s, start_t, end_t, purpose, bid)
+    )
+    con.commit(); con.close()
+    bg(export_excel)
+    return jsonify(get_booking(bid)), 200
 
 @app.delete("/api/bookings/<int:bid>")
 def api_delete(bid: int):
