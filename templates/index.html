@@ -50,7 +50,7 @@ body{
 .tb-back.on{visibility:visible}
 .tb-back:active{background:var(--coral);color:#fff}
 .tb-logo{flex:1;display:flex;align-items:center}
-.tb-logo img{height:22px;object-fit:contain}
+.tb-logo img{height:36px;object-fit:contain}
 .tb-right{text-align:right;flex-shrink:0}
 .tb-title{font-size:13px;font-weight:700}
 .tb-sub{font-size:10px;color:var(--muted)}
@@ -82,7 +82,7 @@ body{
   padding:40px 24px;min-height:100vh;
   background:linear-gradient(160deg,var(--teal5),var(--teal4),var(--teal));
 }
-.sp-logo img{height:38px;margin-bottom:12px}
+.sp-logo img{height:56px;margin-bottom:14px}
 .sp-tagline{font-size:11px;color:var(--muted);letter-spacing:2px;text-transform:uppercase;text-align:center;margin-bottom:6px}
 .sp-head{font-size:22px;font-weight:800;text-align:center;margin-bottom:6px}
 .sp-desc{font-size:12px;color:var(--muted);text-align:center;margin-bottom:32px}
@@ -502,6 +502,7 @@ select option{background:var(--teal4)!important;color:var(--text)!important}
 .reject-reason{font-size:12px;color:#f1948a;margin-top:4px;
   background:rgba(231,76,60,.07);border-radius:6px;padding:5px 8px;display:block}
 /* ── TOPBAR ── */
+#tb-img{height:34px!important;width:auto}
 .tb-t{font-size:15px}
 .tb-s{font-size:12px}
 /* ── ROOM CARD ── */
@@ -841,7 +842,10 @@ let _apiReady = false;
   try {
     await fetch(API + '/health', { signal: AbortSignal.timeout(25000) });
     _apiReady = true;
-  } catch(e) {}
+    console.log('API ready');
+  } catch(e) {
+    console.log('API wake-up failed, will retry on first call');
+  }
 })();
 
 async function apiFetch(path, opts = {}, ms = 15000) {
@@ -1415,16 +1419,26 @@ function makeTCard(b) {
 // ─── ADMIN ACTIONS ────────────────────────────────────────────────────
 async function adminAct(bid, newStatus, rejectReason) {
   const card = document.getElementById('pc-'+bid);
-  if (card){ card.style.opacity='.4'; card.style.pointerEvents='none'; }
+  if (card){
+    card.style.opacity='.5';
+    card.style.pointerEvents='none';
+    // Show processing label
+    const proc = document.createElement('div');
+    proc.id='proc-'+bid;
+    proc.style.cssText='text-align:center;font-size:12px;color:var(--muted);padding:4px';
+    proc.textContent='⏳ Обрабатывается...';
+    card.appendChild(proc);
+  }
   haptic(newStatus==='approved'?'success':'warning');
+  showToast(newStatus==='approved'?'⏳ Подтверждаем...':'⏳ Отклоняем...', 20000);
   try {
     const body = { admin_password:ADMIN_PASS, status:newStatus };
     if (rejectReason) body.reject_reason = rejectReason;
-    await apiFetch('/api/bookings/'+bid+'/status', { method:'POST', body:JSON.stringify(body) });
+    await apiFetch('/api/bookings/'+bid+'/status', { method:'POST', body:JSON.stringify(body) }, 20000);
     if (card) card.remove();
     const p = parseInt(document.getElementById('adm-p').textContent)||0;
     document.getElementById('adm-p').textContent = Math.max(0, p-1);
-    showToast(newStatus==='approved'?'✅ Заявка подтверждена':'❌ Заявка отклонена');
+    showToast(newStatus==='approved'?'✅ Заявка подтверждена!':'❌ Заявка отклонена');
     setTimeout(() => renderAdminDash(), 700);
   } catch(e) {
     if (card){ card.style.opacity='1'; card.style.pointerEvents=''; }
@@ -1435,17 +1449,18 @@ async function adminAct(bid, newStatus, rejectReason) {
 async function adminDelete(bid) {
   if (!confirm('Удалить заявку #'+bid+' безвозвратно?')) return;
   const card = document.getElementById('pc-'+bid);
-  if (card){ card.style.opacity='.4'; card.style.pointerEvents='none'; }
+  if (card){ card.style.opacity='.5'; card.style.pointerEvents='none'; }
+  showToast('⏳ Удаляем...', 20000);
   try {
     await apiFetch('/api/bookings/'+bid, {
       method: 'DELETE', body: JSON.stringify({ admin_password:ADMIN_PASS })
-    });
+    }, 20000);
     if (card) card.remove();
     showToast('🗑 Заявка #'+bid+' удалена');
     setTimeout(() => renderAdminDash(), 500);
   } catch(e) {
     if (card){ card.style.opacity='1'; card.style.pointerEvents=''; }
-    showToast(errMsg(e), 4000);
+    showToast('⚠️ Ошибка удаления: '+errMsg(e), 4000);
   }
 }
 
@@ -1599,7 +1614,7 @@ async function submit() {
     showToast('✅ Заявка #'+saved.id+' принята');
     await loadBooked();
   } catch(e) {
-    showToast(errMsg(e), 5000);
+    showToast('⚠️ Заявка сохранена локально. Сервер: '+errMsg(e), 6000);
   }
 }
 
