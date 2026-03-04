@@ -376,6 +376,26 @@ def api_status(bid):
     bg(notify_user, booking, new_status, reject_reason)
     return jsonify(result), 200
 
+
+@app.post("/api/bookings/<int:bid>/cancel")
+def api_cancel(bid):
+    """Cancel own pending booking without admin password."""
+    p = request.get_json(force=True, silent=True) or {}
+    uid = str(p.get("user_id","")).strip()
+    reason = str(p.get("reason","")).strip() or "Отменено пользователем"
+    booking = get_booking(bid)
+    if not booking:
+        return jsonify({"error": "not_found"}), 404
+    if not uid or str(booking.get("user_id","")) != uid:
+        return jsonify({"error": "forbidden"}), 403
+    if booking.get("status") != "pending":
+        return jsonify({"error": "bad_status"}), 400
+    result = set_status(bid, "rejected", reason)
+    if result is None:
+        return jsonify({"error": "server_error"}), 500
+    bg(notify_user, booking, "rejected", reason)
+    return jsonify(result), 200
+
 @app.route("/api/bookings/<int:bid>", methods=["PATCH"])
 def api_patch(bid):
     p = request.get_json(force=True, silent=True) or {}
