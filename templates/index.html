@@ -19,6 +19,7 @@
   --r:13px;
   --ic-tab:22px; --ic-room:30px; --ic-role:40px;
 }
+ html{ font-size: clamp(16px, 1.2vw + 12px, 19px); } 
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{height:100%;overflow:hidden;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}
 body{
@@ -323,6 +324,9 @@ select option{background:var(--teal4)!important;color:var(--text)!important}
 .btn-p{background:linear-gradient(135deg,var(--coral),var(--coral2));color:#fff;box-shadow:0 6px 20px rgba(232,89,58,.35)}
 .btn-p:disabled{background:rgba(0,0,0,.25);color:var(--muted);box-shadow:none;cursor:not-allowed;transform:none}
 .btn-ghost{background:rgba(0,0,0,.2);color:var(--muted);border:1px solid var(--border);font-size:13px;padding:10px;margin-top:8px}
+  html{ font-size: 18px; }
+body{ line-height: 1.35; }
+input,select,textarea,button{ font-size: 1rem; }
 </style>
 </head>
 
@@ -1381,7 +1385,7 @@ function ensureAnalyticsMounted(){
 
   // Создаем BI панель динамически (чтобы не держать огромную разметку в админке)
   mount.innerHTML = `
-    <div class="dash-section" id="bi-panel" style="padding:14px">
+    <div class="dash-section" id="bi-panel" style="padding:10px">
       <div class="dash-title" style="display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
         <div>📈 BI Аналитика</div>
         <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
@@ -1399,26 +1403,26 @@ function ensureAnalyticsMounted(){
         <div class="stat-card"><div class="stat-num" id="bi-pend-avg">0м</div><div class="stat-lbl">ср. ожидание</div></div>
       </div>
 
-      <div style="display:grid;grid-template-columns:1fr;gap:12px;margin-top:12px">
-        <div class="dash-section" style="padding:12px">
+     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:10px;margin-top:10px">
+        <div class="dash-section" id="bi-panel" style="padding:10px">
           <div class="dash-title" style="margin-bottom:8px">Статусы</div>
-          <canvas id="bi-status" height="120"></canvas>
+          <canvas id="bi-status" height="90"></canvas>
         </div>
-        <div class="dash-section" style="padding:12px">
+        <div class="dash-section" id="bi-panel" style="padding:10px">
           <div class="dash-title" style="margin-bottom:8px">Активность по дням</div>
-          <canvas id="bi-days" height="120"></canvas>
+          <canvas id="bi-days" height="90"></canvas>
         </div>
-        <div class="dash-section" style="padding:12px">
+        <div class="dash-section" id="bi-panel" style="padding:10px">
           <div class="dash-title" style="margin-bottom:8px">Популярные часы старта</div>
-          <canvas id="bi-hours" height="120"></canvas>
+          <canvas id="bi-hours" height="90"></canvas>
         </div>
-        <div class="dash-section" style="padding:12px">
+        <div class="dash-section" id="bi-panel" style="padding:10px">
           <div class="dash-title" style="margin-bottom:8px">Топ кабинетов</div>
           <div id="bi-rooms"></div>
         </div>
-        <div class="dash-section" style="padding:12px">
+        <div class="dash-section" id="bi-panel" style="padding:10px">
           <div class="dash-title" style="margin-bottom:8px">Heatmap занятости (минуты)</div>
-          <div id="bi-heat" style="overflow:auto"></div>
+          <div id="bi-heat" style="overflow:auto;max-height:260px"></div>
         </div>
       </div>
     </div>
