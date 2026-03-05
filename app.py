@@ -177,6 +177,23 @@ def list_bookings(uid=None, phone=None, date=None, status=None):
         " ORDER BY date, start_time, id", tuple(params)
     )
 
+def list_bookings_range(start_date: str, end_date: str):
+    """Inclusive range by booking date."""
+    return db_query(
+        "SELECT * FROM bookings WHERE date>=? AND date<=? ORDER BY date, start_time, id",
+        (start_date, end_date),
+    )
+
+def parse_dt(s: str) -> Optional[datetime]:
+    if not s:
+        return None
+    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S"):
+        try:
+            return datetime.strptime(s, fmt)
+        except Exception:
+            pass
+    return None
+
 def set_status(bid, status, reject_reason=""):
     b = get_booking(bid)
     if not b: return None
@@ -317,6 +334,156 @@ def api_list():
     status = request.args.get("status","").strip()
     rows   = list_bookings(uid or None, phone or None, date or None, status or None)
     return jsonify(rows)
+
+
+@app.post("/api/admin/analytics")
+def api_admin_analytics():
+    """BI analytics for admin panel.
+
+    Body: {admin_password, start_date?, end_date?}
+    Dates are inclusive booking dates (YYYY-MM-DD).
+    """
+    p = request.get_json(force=True, silent=True) or {}
+    if str(p.get("admin_password", "")) != ADMIN_PASSWORD:
+        return jsonify({"error": "bad_password"}), 403
+
+    # Default: last 30 days (inclusive)
+    today = datetime.now().strftime("%Y-%m-%d")
+    start_date = str(p.get("start_date") or "").strip() or today
+    end_date   = str(p.get("end_date") or "").strip() or today
+
+    # If only one date provided, mirror it
+    if start_date and not end_date:
+        end_date = start_date
+    if end_date and not start_date:
+        start_date = end_date
+
+    # Validate
+    try:
+        datetime.strptime(start_date, "%Y-%m-%d")
+        datetime.strptime(end_date, "%Y-%m-%d")
+    except Exception:
+        return jsonify({"error": "invalid_date"}), 400
+
+    rows = list_bookings_range(start_date, end_date)
+
+    status_counts = {"pending": 0, "approved": 0, "rejected": 0}
+    room_counts = {}
+    day_counts = {}
+    hour_counts = {str(h).zfill(2): 0 for h in range(0, 24)}
+
+    # Heatmap: minutes per (date, room)
+    heat = {}  # date -> room_id -> minutes
+
+    now = datetime.now()
+    pending_ages_min = []
+
+    for b in rows:
+        st = str(b.get("status") or "pending")
+        if st in status_counts:
+            status_counts[st] += 1
+        else:
+            status_counts[st] = status_counts.get(st, 0) + 1
+
+        rid = str(b.get("room_id") or "")
+        room_counts[rid] = room_counts.get(rid, 0) + 1
+
+        d = str(b.get("date") or "")
+        day_counts[d] = day_counts.get(d, 0) + 1
+
+        # start hour
+        try:
+            hh = str(b.get("start_time", "00:00")).split(":", 1)[0].zfill(2)
+            if hh in hour_counts:
+                hour_counts[hh] += 1
+        except Exception:
+            pass
+
+        # heatmap minutes (approved + pending count as occupancy)
+        if st in ("approved", "pending") and d and rid:
+            try:
+                mins = max(0, tmin(b["end_time"]) - tmin(b["start_time"]))
+            except Exception:
+                mins = 0
+            heat.setdefault(d, {})[rid] = heat.setdefault(d, {}).get(rid, 0) + mins
+
+        # pending age
+        if st == "pending":
+            created = parse_dt(str(b.get("created_at") or ""))
+            if created:
+                pending_ages_min.append(max(0, int((now - created).total_seconds() // 60)))
+
+    total = len(rows)
+    approval_rate = 0.0
+    if (status_counts.get("approved", 0) + status_counts.get("rejected", 0)) > 0:
+        approval_rate = status_counts.get("approved", 0) / max(1, (status_counts.get("approved", 0) + status_counts.get("rejected", 0)))
+
+    busiest_day = None
+    if day_counts:
+        busiest_day = max(day_counts.items(), key=lambda x: x[1])[0]
+
+    top_room = None
+    if room_counts:
+        top_room = max(room_counts.items(), key=lambda x: x[1])[0]
+
+    avg_pending_min = int(sum(pending_ages_min) / len(pending_ages_min)) if pending_ages_min else 0
+
+    # Build heatmap matrix
+    dates_sorted = sorted(set(list(day_counts.keys()) + list(heat.keys())))
+    rooms_sorted = sorted(ROOMS.keys())
+    heat_matrix = []
+    for d in dates_sorted:
+        row = {"date": d}
+        for rid in rooms_sorted:
+            row[rid] = int(heat.get(d, {}).get(rid, 0))
+        heat_matrix.append(row)
+
+    return jsonify({
+        "range": {"start": start_date, "end": end_date},
+        "total": total,
+        "status_counts": status_counts,
+        "approval_rate": round(approval_rate * 100, 1),
+        "avg_pending_minutes": avg_pending_min,
+        "busiest_day": busiest_day,
+        "top_room": {"room_id": top_room, "room_name": ROOMS.get(top_room, top_room)} if top_room else None,
+        "room_counts": [{"room_id": rid, "room_name": ROOMS.get(rid, rid), "count": c} for rid, c in sorted(room_counts.items(), key=lambda x: x[1], reverse=True)],
+        "day_counts": [{"date": d, "count": c} for d, c in sorted(day_counts.items())],
+        "hour_counts": [{"hour": h, "count": hour_counts[h]} for h in sorted(hour_counts.keys())],
+        "heatmap_minutes": {"rooms": [{"room_id": r, "room_name": ROOMS.get(r, r)} for r in rooms_sorted], "rows": heat_matrix},
+    }), 200
+
+
+@app.post("/api/admin/export.csv")
+def api_admin_export_csv():
+    """Export bookings for a given date range as CSV. Admin-only."""
+    import csv
+    from io import StringIO
+    p = request.get_json(force=True, silent=True) or {}
+    if str(p.get("admin_password", "")) != ADMIN_PASSWORD:
+        return jsonify({"error": "bad_password"}), 403
+    start_date = str(p.get("start_date") or "").strip()
+    end_date = str(p.get("end_date") or "").strip()
+    if not start_date or not end_date:
+        return jsonify({"error": "missing_date_range"}), 400
+    try:
+        datetime.strptime(start_date, "%Y-%m-%d")
+        datetime.strptime(end_date, "%Y-%m-%d")
+    except Exception:
+        return jsonify({"error": "invalid_date"}), 400
+
+    rows = list_bookings_range(start_date, end_date)
+    out = StringIO()
+    w = csv.writer(out)
+    cols = ["id","created_at","status","room_id","room_name","date","start_time","end_time","purpose","participants","full_name","phone","department","reject_reason"]
+    w.writerow(cols)
+    for r in rows:
+        w.writerow([str(r.get(k, "") or "") for k in cols])
+
+    # Flask Response
+    from flask import Response
+    resp = Response(out.getvalue(), mimetype="text/csv; charset=utf-8")
+    resp.headers["Content-Disposition"] = f"attachment; filename=bookings_{start_date}_to_{end_date}.csv"
+    return resp
 
 @app.post("/api/bookings")
 def api_create():
