@@ -1888,6 +1888,13 @@ function showToast(msg,dur=2500){
 ═══════════════════════════════════════════════════ */
 loadBooked().then(()=>{ try{renderCal();}catch(e){} });
 startUserRefresh();
+
+/* Перенос BI панели в вкладку аналитики */
+try {
+  ensureAnalyticsMounted();
+} catch(e) {
+  console.warn("BI mount skipped", e);
+}
 goView('splash');
 </script>
 </body>
