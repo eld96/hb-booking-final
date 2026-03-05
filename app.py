@@ -1,6 +1,8 @@
 import os
 import csv
 import io
+import time
+import secrets
 from datetime import datetime
 from flask import Flask, request, jsonify, render_template, Response
 import psycopg2
@@ -11,10 +13,15 @@ app = Flask(__name__)
 DATABASE_URL = os.environ.get("DATABASE_URL")
 ADMIN_PASSWORD = os.environ.get("ADMIN_PASSWORD", "bank2024")
 
+RATE_LIMIT = {}
+REQUEST_WINDOW = 10
+MAX_REQUESTS = 20
 
-# =========================
+
+# ======================
 # DATABASE
-# =========================
+# ======================
+
 def db():
     return psycopg2.connect(DATABASE_URL)
 
@@ -46,19 +53,53 @@ def init_db():
 init_db()
 
 
-# =========================
-# FRONTEND
-# =========================
+# ======================
+# RATE LIMIT
+# ======================
+
+def check_rate_limit(ip):
+
+    now = time.time()
+
+    if ip not in RATE_LIMIT:
+        RATE_LIMIT[ip] = []
+
+    RATE_LIMIT[ip] = [
+        t for t in RATE_LIMIT[ip]
+        if now - t < REQUEST_WINDOW
+    ]
+
+    if len(RATE_LIMIT[ip]) > MAX_REQUESTS:
+        return False
+
+    RATE_LIMIT[ip].append(now)
+    return True
+
+
+@app.before_request
+def protect():
+
+    ip = request.remote_addr
+
+    if not check_rate_limit(ip):
+        return jsonify({"error": "rate_limit"}), 429
+
+
+# ======================
+# FRONT
+# ======================
+
 @app.route("/")
 def index():
     return render_template("index.html")
 
 
-# =========================
+# ======================
 # BOOKINGS
-# =========================
+# ======================
+
 @app.get("/api/bookings")
-def get_bookings():
+def bookings():
 
     user_id = request.args.get("user_id")
     phone = request.args.get("phone")
@@ -69,11 +110,13 @@ def get_bookings():
     if user_id:
         cur.execute(
             "SELECT * FROM bookings WHERE user_id=%s ORDER BY created_at DESC",
-            (user_id,))
+            (user_id,)
+        )
     elif phone:
         cur.execute(
             "SELECT * FROM bookings WHERE phone=%s ORDER BY created_at DESC",
-            (phone,))
+            (phone,)
+        )
     else:
         cur.execute(
             "SELECT * FROM bookings ORDER BY created_at DESC"
@@ -87,28 +130,45 @@ def get_bookings():
     return jsonify(rows)
 
 
-# =========================
+# ======================
 # CREATE BOOKING
-# =========================
+# ======================
+
 @app.post("/api/book")
-def create_booking():
+def book():
 
     data = request.json
 
+    room = data.get("room")
+    date = data.get("date")
+    time_slot = data.get("time")
+
     conn = db()
     cur = conn.cursor()
+
+    # защита от двойного бронирования
+    cur.execute("""
+        SELECT id FROM bookings
+        WHERE room=%s
+        AND booking_date=%s
+        AND start_time=%s
+        AND status IN ('pending','approved')
+    """,(room,date,time_slot))
+
+    if cur.fetchone():
+        return jsonify({"error":"slot_taken"}),409
 
     cur.execute("""
         INSERT INTO bookings
         (room, booking_date, start_time, phone, user_id, comment, status)
         VALUES (%s,%s,%s,%s,%s,%s,'pending')
-    """, (
-        data.get("room"),
-        data.get("date"),
-        data.get("time"),
+    """,(
+        room,
+        date,
+        time_slot,
         data.get("phone"),
         data.get("user_id"),
-        data.get("comment"),
+        data.get("comment")
     ))
 
     conn.commit()
@@ -116,14 +176,15 @@ def create_booking():
     cur.close()
     conn.close()
 
-    return jsonify({"ok": True})
+    return jsonify({"ok":True})
 
 
-# =========================
-# CANCEL BOOKING (GUEST)
-# =========================
+# ======================
+# CANCEL
+# ======================
+
 @app.post("/api/bookings/<int:bid>/cancel")
-def cancel_booking(bid):
+def cancel(bid):
 
     conn = db()
     cur = conn.cursor()
@@ -132,29 +193,27 @@ def cancel_booking(bid):
         UPDATE bookings
         SET status='cancelled'
         WHERE id=%s
-    """, (bid,))
+    """,(bid,))
 
     conn.commit()
 
     cur.close()
     conn.close()
 
-    return jsonify({"ok": True})
+    return jsonify({"ok":True})
 
 
-# =========================
-# ADMIN STATUS UPDATE
-# =========================
+# ======================
+# ADMIN STATUS
+# ======================
+
 @app.post("/api/bookings/<int:bid>/status")
 def admin_status(bid):
 
     data = request.json
 
     if data.get("admin_password") != ADMIN_PASSWORD:
-        return jsonify({"error": "forbidden"}), 403
-
-    status = data.get("status")
-    reason = data.get("reason")
+        return jsonify({"error":"forbidden"}),403
 
     conn = db()
     cur = conn.cursor()
@@ -163,26 +222,31 @@ def admin_status(bid):
         UPDATE bookings
         SET status=%s, reject_reason=%s
         WHERE id=%s
-    """, (status, reason, bid))
+    """,(
+        data.get("status"),
+        data.get("reason"),
+        bid
+    ))
 
     conn.commit()
 
     cur.close()
     conn.close()
 
-    return jsonify({"ok": True})
+    return jsonify({"ok":True})
 
 
-# =========================
+# ======================
 # ANALYTICS
-# =========================
+# ======================
+
 @app.post("/api/admin/analytics")
 def analytics():
 
     data = request.json
 
     if data.get("admin_password") != ADMIN_PASSWORD:
-        return jsonify({"error": "forbidden"}), 403
+        return jsonify({"error":"forbidden"}),403
 
     start = data.get("start_date")
     end = data.get("end_date")
@@ -193,55 +257,48 @@ def analytics():
     cur.execute("""
         SELECT * FROM bookings
         WHERE booking_date BETWEEN %s AND %s
-    """, (start, end))
+    """,(start,end))
 
     rows = cur.fetchall()
 
-    cur.close()
-    conn.close()
+    total=len(rows)
+    pending=len([r for r in rows if r["status"]=="pending"])
+    approved=len([r for r in rows if r["status"]=="approved"])
+    rejected=len([r for r in rows if r["status"]=="rejected"])
 
-    total = len(rows)
-    pending = len([r for r in rows if r["status"] == "pending"])
-    approved = len([r for r in rows if r["status"] == "approved"])
-    rejected = len([r for r in rows if r["status"] == "rejected"])
+    by_day={}
 
-    by_day = {}
     for r in rows:
-        d = str(r["booking_date"])
-        by_day[d] = by_day.get(d, 0) + 1
+        d=str(r["booking_date"])
+        by_day[d]=by_day.get(d,0)+1
 
     return jsonify({
-        "total": total,
-        "pending": pending,
-        "approved": approved,
-        "rejected": rejected,
-        "by_day": by_day
+        "total":total,
+        "pending":pending,
+        "approved":approved,
+        "rejected":rejected,
+        "by_day":by_day
     })
 
 
-# =========================
-# EXPORT CSV
-# =========================
+# ======================
+# CSV EXPORT
+# ======================
+
 @app.post("/api/admin/export.csv")
-def export_csv():
+def export():
 
     data = request.json
 
     if data.get("admin_password") != ADMIN_PASSWORD:
-        return jsonify({"error": "forbidden"}), 403
-
-    start = data.get("start_date")
-    end = data.get("end_date")
+        return jsonify({"error":"forbidden"}),403
 
     conn = db()
     cur = conn.cursor(cursor_factory=RealDictCursor)
 
-    cur.execute("""
-        SELECT * FROM bookings
-        WHERE booking_date BETWEEN %s AND %s
-    """, (start, end))
+    cur.execute("SELECT * FROM bookings")
 
-    rows = cur.fetchall()
+    rows=cur.fetchall()
 
     cur.close()
     conn.close()
@@ -256,9 +313,8 @@ def export_csv():
         "time",
         "status",
         "phone",
-        "user_id",
         "comment",
-        "created_at"
+        "created"
     ])
 
     for r in rows:
@@ -269,7 +325,6 @@ def export_csv():
             r["start_time"],
             r["status"],
             r["phone"],
-            r["user_id"],
             r["comment"],
             r["created_at"]
         ])
@@ -278,14 +333,20 @@ def export_csv():
         output.getvalue(),
         mimetype="text/csv",
         headers={
-            "Content-Disposition": "attachment;filename=bookings.csv"
+            "Content-Disposition":"attachment;filename=bookings.csv"
         }
     )
 
 
-# =========================
-# RUN SERVER
-# =========================
+# ======================
+# RUN
+# ======================
+
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+
+    port = int(os.environ.get("PORT",10000))
+
+    app.run(
+        host="0.0.0.0",
+        port=port
+    )
