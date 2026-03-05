@@ -1011,8 +1011,10 @@ function switchTab(t) {
   const bb = document.getElementById('botbar');
   if (t === 'book') { bb.style.display='block'; btnOk(!!S.roomId); }
   else bb.style.display = 'none';
+
   if (t === 'my')    renderMyBookings();
-  if (t === 'admin') { renderAdminDash(); adminBIInit(); }
+  if (t === 'admin') renderAdminDash();
+  if (t === 'analytics') { ensureAnalyticsMounted(); adminBIInit(); }
 }
 
 /* ═══════════════════════════════════════════════════
@@ -1272,7 +1274,7 @@ async function renderMyBookings() {
     const tag    = b._tmp ? ' <span style="font-size:11px;color:var(--gold)">⏱</span>' : '';
     const dept   = b.department ? `<div class="bi-dept">🏗 ${b.department}</div>` : '';
     const reason = b.reject_reason ? `<span class="reject-reason">📌 ${b.reject_reason}</span>` : '';
-    const canCancel = status === 'pending' && !b._tmp;
+    const canCancel = (status === 'pending' || status === 'approved') && !b._tmp;
     el.innerHTML = `
       <div class="bitem-row">
         <div class="bi-dot ${status}"></div>
@@ -1294,7 +1296,7 @@ async function renderMyBookings() {
 
 async function guestCancel(bid, btn) {
   const u = getUser();
-  if (!confirm('Отменить заявку #' + bid + '?\nОтменить можно только ожидающие.')) return;
+  if (!confirm('Отменить заявку #' + bid + '?\nОтменить можно, если заявка ожидает или уже подтверждена.')) return;
   btn.disabled = true; btn.textContent = '⏳ Отмена...';
   try {
     await api('/api/bookings/' + bid + '/cancel', {
@@ -1396,6 +1398,32 @@ let _biCharts={ status:null, days:null, hours:null };
 
 function _cssVar(name){
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+
+function ensureAnalyticsMounted(){
+  // Move BI panel from Admin tab into Analytics tab so it doesn't mix with management.
+  const mount = document.getElementById('analytics-mount');
+  if(!mount) return;
+  // Already mounted?
+  if(mount.dataset.mounted === '1') return;
+
+  const biPanel = document.getElementById('bi-panel');
+  if(!biPanel){
+    mount.innerHTML = '<div class="empty-st"><div class="ei">⚠️</div>BI панель не найдена в разметке</div>';
+    return;
+  }
+  // Create placeholder in admin pane to keep layout stable
+  const ph = document.createElement('div');
+  ph.id = 'bi-panel-placeholder';
+  biPanel.parentElement.insertBefore(ph, biPanel);
+  mount.appendChild(biPanel);
+
+  // Improve title in analytics tab
+  const title = mount.querySelector('.dash-title > div');
+  if(title) title.textContent = '📊 BI Аналитика';
+
+  mount.dataset.mounted = '1';
 }
 
 function adminBIInit(){
