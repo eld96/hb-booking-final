@@ -4,11 +4,12 @@ from datetime import datetime
 
 app = Flask(__name__)
 
+DB="bookings.db"
 ADMIN_PASSWORD="bank2024"
 
 
 def db():
-    return sqlite3.connect("bookings.db")
+    return sqlite3.connect(DB)
 
 
 @app.route("/")
@@ -70,7 +71,7 @@ def book():
 
 
 @app.post("/api/bookings/<int:id>/cancel")
-def cancel(id):
+def cancel_booking(id):
 
     con=db()
     cur=con.cursor()
@@ -87,7 +88,7 @@ def cancel(id):
 
 
 @app.post("/api/admin/status")
-def admin():
+def admin_status():
 
     data=request.json
 
