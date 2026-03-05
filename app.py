@@ -177,23 +177,6 @@ def list_bookings(uid=None, phone=None, date=None, status=None):
         " ORDER BY date, start_time, id", tuple(params)
     )
 
-def list_bookings_range(start_date: str, end_date: str):
-    """Inclusive range by booking date."""
-    return db_query(
-        "SELECT * FROM bookings WHERE date>=? AND date<=? ORDER BY date, start_time, id",
-        (start_date, end_date),
-    )
-
-def parse_dt(s: str) -> Optional[datetime]:
-    if not s:
-        return None
-    for fmt in ("%Y-%m-%d %H:%M:%S", "%Y-%m-%dT%H:%M:%S"):
-        try:
-            return datetime.strptime(s, fmt)
-        except Exception:
-            pass
-    return None
-
 def set_status(bid, status, reject_reason=""):
     b = get_booking(bid)
     if not b: return None
@@ -335,156 +318,6 @@ def api_list():
     rows   = list_bookings(uid or None, phone or None, date or None, status or None)
     return jsonify(rows)
 
-
-@app.post("/api/admin/analytics")
-def api_admin_analytics():
-    """BI analytics for admin panel.
-
-    Body: {admin_password, start_date?, end_date?}
-    Dates are inclusive booking dates (YYYY-MM-DD).
-    """
-    p = request.get_json(force=True, silent=True) or {}
-    if str(p.get("admin_password", "")) != ADMIN_PASSWORD:
-        return jsonify({"error": "bad_password"}), 403
-
-    # Default: last 30 days (inclusive)
-    today = datetime.now().strftime("%Y-%m-%d")
-    start_date = str(p.get("start_date") or "").strip() or today
-    end_date   = str(p.get("end_date") or "").strip() or today
-
-    # If only one date provided, mirror it
-    if start_date and not end_date:
-        end_date = start_date
-    if end_date and not start_date:
-        start_date = end_date
-
-    # Validate
-    try:
-        datetime.strptime(start_date, "%Y-%m-%d")
-        datetime.strptime(end_date, "%Y-%m-%d")
-    except Exception:
-        return jsonify({"error": "invalid_date"}), 400
-
-    rows = list_bookings_range(start_date, end_date)
-
-    status_counts = {"pending": 0, "approved": 0, "rejected": 0}
-    room_counts = {}
-    day_counts = {}
-    hour_counts = {str(h).zfill(2): 0 for h in range(0, 24)}
-
-    # Heatmap: minutes per (date, room)
-    heat = {}  # date -> room_id -> minutes
-
-    now = datetime.now()
-    pending_ages_min = []
-
-    for b in rows:
-        st = str(b.get("status") or "pending")
-        if st in status_counts:
-            status_counts[st] += 1
-        else:
-            status_counts[st] = status_counts.get(st, 0) + 1
-
-        rid = str(b.get("room_id") or "")
-        room_counts[rid] = room_counts.get(rid, 0) + 1
-
-        d = str(b.get("date") or "")
-        day_counts[d] = day_counts.get(d, 0) + 1
-
-        # start hour
-        try:
-            hh = str(b.get("start_time", "00:00")).split(":", 1)[0].zfill(2)
-            if hh in hour_counts:
-                hour_counts[hh] += 1
-        except Exception:
-            pass
-
-        # heatmap minutes (approved + pending count as occupancy)
-        if st in ("approved", "pending") and d and rid:
-            try:
-                mins = max(0, tmin(b["end_time"]) - tmin(b["start_time"]))
-            except Exception:
-                mins = 0
-            heat.setdefault(d, {})[rid] = heat.setdefault(d, {}).get(rid, 0) + mins
-
-        # pending age
-        if st == "pending":
-            created = parse_dt(str(b.get("created_at") or ""))
-            if created:
-                pending_ages_min.append(max(0, int((now - created).total_seconds() // 60)))
-
-    total = len(rows)
-    approval_rate = 0.0
-    if (status_counts.get("approved", 0) + status_counts.get("rejected", 0)) > 0:
-        approval_rate = status_counts.get("approved", 0) / max(1, (status_counts.get("approved", 0) + status_counts.get("rejected", 0)))
-
-    busiest_day = None
-    if day_counts:
-        busiest_day = max(day_counts.items(), key=lambda x: x[1])[0]
-
-    top_room = None
-    if room_counts:
-        top_room = max(room_counts.items(), key=lambda x: x[1])[0]
-
-    avg_pending_min = int(sum(pending_ages_min) / len(pending_ages_min)) if pending_ages_min else 0
-
-    # Build heatmap matrix
-    dates_sorted = sorted(set(list(day_counts.keys()) + list(heat.keys())))
-    rooms_sorted = sorted(ROOMS.keys())
-    heat_matrix = []
-    for d in dates_sorted:
-        row = {"date": d}
-        for rid in rooms_sorted:
-            row[rid] = int(heat.get(d, {}).get(rid, 0))
-        heat_matrix.append(row)
-
-    return jsonify({
-        "range": {"start": start_date, "end": end_date},
-        "total": total,
-        "status_counts": status_counts,
-        "approval_rate": round(approval_rate * 100, 1),
-        "avg_pending_minutes": avg_pending_min,
-        "busiest_day": busiest_day,
-        "top_room": {"room_id": top_room, "room_name": ROOMS.get(top_room, top_room)} if top_room else None,
-        "room_counts": [{"room_id": rid, "room_name": ROOMS.get(rid, rid), "count": c} for rid, c in sorted(room_counts.items(), key=lambda x: x[1], reverse=True)],
-        "day_counts": [{"date": d, "count": c} for d, c in sorted(day_counts.items())],
-        "hour_counts": [{"hour": h, "count": hour_counts[h]} for h in sorted(hour_counts.keys())],
-        "heatmap_minutes": {"rooms": [{"room_id": r, "room_name": ROOMS.get(r, r)} for r in rooms_sorted], "rows": heat_matrix},
-    }), 200
-
-
-@app.post("/api/admin/export.csv")
-def api_admin_export_csv():
-    """Export bookings for a given date range as CSV. Admin-only."""
-    import csv
-    from io import StringIO
-    p = request.get_json(force=True, silent=True) or {}
-    if str(p.get("admin_password", "")) != ADMIN_PASSWORD:
-        return jsonify({"error": "bad_password"}), 403
-    start_date = str(p.get("start_date") or "").strip()
-    end_date = str(p.get("end_date") or "").strip()
-    if not start_date or not end_date:
-        return jsonify({"error": "missing_date_range"}), 400
-    try:
-        datetime.strptime(start_date, "%Y-%m-%d")
-        datetime.strptime(end_date, "%Y-%m-%d")
-    except Exception:
-        return jsonify({"error": "invalid_date"}), 400
-
-    rows = list_bookings_range(start_date, end_date)
-    out = StringIO()
-    w = csv.writer(out)
-    cols = ["id","created_at","status","room_id","room_name","date","start_time","end_time","purpose","participants","full_name","phone","department","reject_reason"]
-    w.writerow(cols)
-    for r in rows:
-        w.writerow([str(r.get(k, "") or "") for k in cols])
-
-    # Flask Response
-    from flask import Response
-    resp = Response(out.getvalue(), mimetype="text/csv; charset=utf-8")
-    resp.headers["Content-Disposition"] = f"attachment; filename=bookings_{start_date}_to_{end_date}.csv"
-    return resp
-
 @app.post("/api/bookings")
 def api_create():
     p = request.get_json(force=True, silent=True) or {}
@@ -543,26 +376,6 @@ def api_status(bid):
     bg(notify_user, booking, new_status, reject_reason)
     return jsonify(result), 200
 
-
-@app.post("/api/bookings/<int:bid>/cancel")
-def api_cancel(bid):
-    """Cancel own pending booking without admin password."""
-    p = request.get_json(force=True, silent=True) or {}
-    uid = str(p.get("user_id","")).strip()
-    reason = str(p.get("reason","")).strip() or "Отменено пользователем"
-    booking = get_booking(bid)
-    if not booking:
-        return jsonify({"error": "not_found"}), 404
-    if not uid or str(booking.get("user_id","")) != uid:
-        return jsonify({"error": "forbidden"}), 403
-    if booking.get("status") != "pending":
-        return jsonify({"error": "bad_status"}), 400
-    result = set_status(bid, "rejected", reason)
-    if result is None:
-        return jsonify({"error": "server_error"}), 500
-    bg(notify_user, booking, "rejected", reason)
-    return jsonify(result), 200
-
 @app.route("/api/bookings/<int:bid>", methods=["PATCH"])
 def api_patch(bid):
     p = request.get_json(force=True, silent=True) or {}
@@ -592,6 +405,177 @@ def api_delete(bid):
     db_exec("DELETE FROM bookings WHERE id=?", (bid,))
     bg(export_excel)
     return jsonify({"ok": True}), 200
+
+
+# ── USER CANCEL (guest) ──────────────────────────────────────────
+@app.post("/api/bookings/<int:bid>/cancel")
+def api_cancel(bid):
+    """Allow booking author to cancel their own booking (pending or approved).
+    Marks status='cancelled' (does not conflict with availability).
+    """
+    p = request.get_json(force=True, silent=True) or {}
+    user_id = str(p.get("user_id","")).strip()
+    phone   = str(p.get("phone","")).strip().replace(" ","")
+    booking = get_booking(bid)
+    if not booking:
+        return jsonify({"error":"not_found"}), 404
+    if booking.get("status") not in ("pending","approved"):
+        return jsonify({"error":"cannot_cancel"}), 400
+
+    # Author check: match user_id OR phone (normalized)
+    b_uid = str(booking.get("user_id","") or "").strip()
+    b_ph  = str(booking.get("phone","") or "").strip().replace(" ","")
+    if not ((user_id and b_uid and user_id == b_uid) or (phone and b_ph and phone == b_ph)):
+        return jsonify({"error":"forbidden"}), 403
+
+    db_exec("UPDATE bookings SET status=? WHERE id=?", ("cancelled", bid))
+    bg(export_excel)
+    # Notify admins + user (if TG configured)
+    try:
+        bg(notify_user, booking, "cancelled", "")
+    except Exception:
+        pass
+    return jsonify(get_booking(bid)), 200
+
+
+# ── ADMIN ANALYTICS (BI) ─────────────────────────────────────────
+@app.post("/api/admin/analytics")
+def api_admin_analytics():
+    """Return aggregated metrics for BI dashboards."""
+    p = request.get_json(force=True, silent=True) or {}
+    if str(p.get("admin_password","")) != ADMIN_PASSWORD:
+        return jsonify({"error":"bad_password"}), 403
+
+    start_date = str(p.get("start_date","")).strip()
+    end_date   = str(p.get("end_date","")).strip()
+    if not start_date or not end_date:
+        return jsonify({"error":"missing_dates"}), 400
+    try:
+        sd = datetime.strptime(start_date, "%Y-%m-%d").date()
+        ed = datetime.strptime(end_date,   "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({"error":"bad_dates"}), 400
+    if ed < sd:
+        return jsonify({"error":"bad_range"}), 400
+
+    rows = db_query(
+        "SELECT id,status,room_id,room_name,date,start_time,end_time,created_at,department "
+        "FROM bookings WHERE date>=? AND date<=? ORDER BY date,start_time,id",
+        (start_date, end_date)
+    )
+
+    total = len(rows)
+    st_counts = {"pending":0,"approved":0,"rejected":0,"cancelled":0}
+    by_day = {}
+    by_room = {}
+    by_hour = {str(h).zfill(2):0 for h in range(0,24)}
+    by_dept = {}
+    pending_minutes = []
+    now = datetime.utcnow()
+
+    for r in rows:
+        st = (r.get("status") or "pending").lower()
+        if st not in st_counts: st_counts[st] = 0
+        st_counts[st] += 1
+
+        d = r.get("date")
+        by_day[d] = by_day.get(d, 0) + 1
+
+        rn = r.get("room_name") or r.get("room_id") or "—"
+        by_room[rn] = by_room.get(rn, 0) + 1
+
+        stt = str(r.get("start_time","00:00"))
+        try:
+            hh = stt.split(":")[0].zfill(2)
+            if hh in by_hour: by_hour[hh] += 1
+        except Exception:
+            pass
+
+        dept = (r.get("department") or "").strip() or "—"
+        by_dept[dept] = by_dept.get(dept, 0) + 1
+
+        if st == "pending":
+            ca = str(r.get("created_at") or "")
+            try:
+                created = datetime.strptime(ca, "%Y-%m-%d %H:%M:%S")
+            except Exception:
+                try:
+                    created = datetime.fromisoformat(ca)
+                except Exception:
+                    created = None
+            if created:
+                pending_minutes.append(int(max(0, (now - created).total_seconds()//60)))
+
+    approved = st_counts.get("approved",0)
+    rejected = st_counts.get("rejected",0)
+    decided = approved + rejected
+    approval_rate = int(round((approved/decided)*100)) if decided else 0
+    avg_pending_minutes = int(round(sum(pending_minutes)/len(pending_minutes))) if pending_minutes else 0
+
+    # Simple "room conversion": approved / (approved+rejected) per room
+    conv_room = {}
+    conv_dept = {}
+    for r in rows:
+        st = (r.get("status") or "").lower()
+        rn = r.get("room_name") or r.get("room_id") or "—"
+        dept = (r.get("department") or "").strip() or "—"
+        if rn not in conv_room: conv_room[rn] = {"approved":0,"rejected":0}
+        if dept not in conv_dept: conv_dept[dept] = {"approved":0,"rejected":0}
+        if st in ("approved","rejected"):
+            conv_room[rn][st] += 1
+            conv_dept[dept][st] += 1
+
+    def _rate(d):
+        out = {}
+        for k,v in d.items():
+            a, rj = v.get("approved",0), v.get("rejected",0)
+            denom = a + rj
+            out[k] = int(round((a/denom)*100)) if denom else 0
+        return out
+
+    return jsonify({
+        "total": total,
+        "counts": st_counts,
+        "approved": approved,
+        "rejected": rejected,
+        "pending": st_counts.get("pending",0),
+        "cancelled": st_counts.get("cancelled",0),
+        "approval_rate": approval_rate,
+        "avg_pending_minutes": avg_pending_minutes,
+        "by_day": by_day,
+        "by_room": by_room,
+        "by_hour": by_hour,
+        "by_department": by_dept,
+        "conversion_room": _rate(conv_room),
+        "conversion_department": _rate(conv_dept),
+    }), 200
+
+
+@app.post("/api/admin/export.csv")
+def api_admin_export_csv():
+    p = request.get_json(force=True, silent=True) or {}
+    if str(p.get("admin_password","")) != ADMIN_PASSWORD:
+        return jsonify({"error":"bad_password"}), 403
+    start_date = str(p.get("start_date",""))
+    end_date   = str(p.get("end_date",""))
+    if not start_date or not end_date:
+        return jsonify({"error":"missing_dates"}), 400
+    rows = db_query(
+        "SELECT id,created_at,status,room_name,date,start_time,end_time,purpose,participants,full_name,phone,department,reject_reason "
+        "FROM bookings WHERE date>=? AND date<=? ORDER BY date,start_time,id",
+        (start_date, end_date)
+    )
+    import csv
+    from io import StringIO
+    buf = StringIO()
+    w = csv.writer(buf)
+    w.writerow(["id","created_at","status","room","date","start","end","purpose","participants","full_name","phone","department","reject_reason"])
+    for r in rows:
+        w.writerow([r.get("id"),r.get("created_at"),r.get("status"),r.get("room_name"),r.get("date"),r.get("start_time"),r.get("end_time"),r.get("purpose"),r.get("participants"),r.get("full_name"),r.get("phone"),r.get("department"),r.get("reject_reason")])
+    csv_data = buf.getvalue().encode("utf-8-sig")
+    from flask import Response
+    return Response(csv_data, mimetype="text/csv", headers={"Content-Disposition": f"attachment; filename=hb_analytics_{start_date}_{end_date}.csv"})
+
 
 # ── TELEGRAM WEBHOOK ─────────────────────────────────────────────
 @app.post("/tg/webhook")
