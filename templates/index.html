@@ -653,8 +653,6 @@ select option{background:var(--teal4)!important;color:var(--text)!important}
    Вставь сюда свой base64 (или URL) один раз — и он появится
    и в splash, и в topbar.
 ========================================================= */
-const LOGO_DATA = "data:image/png;base64, iVBORw0KGgoAAAANSUhEUgAAAQAAAAEACAYAAABccqhmAAAD9UlEQVR4nO3cS07cQBiG4X+oA8bQ7B3o0FqQhDgkGQk2oV0n6p1F7rTQmQqkF1g2b6g6c9nq2Zl0yGm9w3qg1l7nJ8AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAADwz0m3w9c7e1y5v9m2H0n7y2c1w0p8tR8l8xv2b2q2o8xQf2m0m7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7x3wqQ6b7m0c2oJ9m0r2b0o8f0l9m0k7xwAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAPw3vZkVJ9m0oU8AAAAASUVORK5CYII=";
-
 /* =========================================================
    TELEGRAM
 ========================================================= */
@@ -803,14 +801,6 @@ async function loadBooked(){
 /* =========================================================
    AUTH
 ========================================================= */
-function applyLogo(){
-  const src = LOGO_DATA || '';
-  const tb = document.getElementById('tb-img');
-  const sp = document.getElementById('logo');
-  if(tb) tb.src = src;
-  if(sp) sp.src = src;
-}
-applyLogo();
 
 function enterGuest(){
   S.role='guest';
