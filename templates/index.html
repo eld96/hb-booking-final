@@ -327,6 +327,57 @@ select option{background:var(--teal4)!important;color:var(--text)!important}
   html{ font-size: 20px; }
 body{ line-height: 1.45; }
 input,select,textarea,button{ font-size: 1rem; }
+  /* === BIG FONT FIX (override) === */
+:root{
+  --fs-xxs: 1.05rem;
+  --fs-xs:  1.00rem;
+  --fs-s:   1.15rem;
+  --fs-m:   1.25rem;
+  --fs-l:   1.22rem;
+}
+
+/* табы (Забронировать / Мои заявки / ...) */
+.tab{ font-size: var(--fs-s) !important; }
+.tab-ic{ font-size: 30px !important; } /* если хочешь крупнее иконки */
+
+/* верхняя панель */
+.tb-title{ font-size: var(--fs-m) !important; }
+.tb-sub{ font-size: var(--fs-xs) !important; }
+
+/* подписи/лейблы */
+.field label,
+.slabel,
+.qlabel,
+.tbl,
+.leg,
+.cr-lbl,
+.dash-title,
+.dash-bar-label,
+.dash-bar-val,
+.sched-hd-t,
+.sched-dt,
+.si-who,
+.si-purpose,
+.rm-cap,
+.rm-floor{
+  font-size: var(--fs-xxs) !important;
+}
+
+/* основной текст карточек/расписания/заявок */
+.rm-name,
+.si-time,
+.bi-time,
+.bi-date,
+.pc-details{
+  font-size: var(--fs-s) !important;
+}
+
+/* кнопки */
+.btn,
+.pc-btn,
+.cancel-btn{
+  font-size: var(--fs-s) !important;
+}
 </style>
 </head>
 
