@@ -264,6 +264,13 @@ def notify_user(booking, status, reject_reason=""):
             f"🏢 {booking['room_name']}\n"
             f"📅 {booking['date']}  ⏰ {booking['start_time']}–{booking['end_time']}"
         )
+    elif status == "cancelled":
+        r = f"\n📌 {reject_reason}" if reject_reason else ""
+        text = (
+            f"🚫 <b>Заявка #{bid} ОТМЕНЕНА</b>{r}\n\n"
+            f"🏢 {booking['room_name']}\n"
+            f"📅 {booking['date']}  ⏰ {booking['start_time']}–{booking['end_time']}"
+        )
     else:
         return
     bg(tg_send, int(cid_str), text)
